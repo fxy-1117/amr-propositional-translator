@@ -1,0 +1,5763 @@
+[
+  {
+    "name": "sentence_or",
+    "raw_amr": "(m / multi-sentence :snt1 (o / or :op1 (c / cat) :op2 (p / possible-01 :ARG1 (d / dog))) :snt2 (r / red-02 :ARG1 (b / bird)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "or",
+            "args": [
+              {
+                "op": "atom",
+                "id": "x3"
+              },
+              {
+                "op": "atom",
+                "id": "x1"
+              }
+            ]
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "possible-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "dog",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "dog possible"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "red-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "bird",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "bird is red"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "cat",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "cat exists"
+        }
+      ]
+    }
+  },
+  {
+    "name": "deep_relative_or",
+    "raw_amr": "(s / see-01 :ARG0 (i / i) :ARG1 (o / or :op1 (c / cat) :op2 (d / dog) :ARG1-of (w / wash-01 :ARG0 (m / man) :ARG1-of (q / quick-02))))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "or",
+            "args": [
+              {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "atom",
+                    "id": "x2"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x3"
+                  }
+                ]
+              },
+              {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "atom",
+                    "id": "x4"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x5"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "quick-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "wash-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "wash is quick"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "cat",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "see-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i see cat"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "cat",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "wash-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "man wash cat"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "see-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i see dog"
+        },
+        {
+          "id": "x5",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "wash-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "man wash dog"
+        }
+      ]
+    }
+  },
+  {
+    "name": "shared_entity",
+    "raw_amr": "(m / multi-sentence :snt1 (w / want-01 :ARG0 (i / i) :ARG1 (o / or :op1 (c / cat) :op2 (d / dog)) :polarity -) :snt2 (s / see-01 :ARG0 i :ARG1 d))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "not",
+            "arg": {
+              "op": "or",
+              "args": [
+                {
+                  "op": "atom",
+                  "id": "x1"
+                },
+                {
+                  "op": "atom",
+                  "id": "x3"
+                }
+              ]
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "cat",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i want cat"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "see-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i see dog"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i want dog"
+        }
+      ]
+    }
+  },
+  {
+    "name": "shared_inverse",
+    "raw_amr": "(m / multi-sentence :snt1 (w / want-01 :ARG0 (i / i) :ARG1 (o / or :op1 (c / cat) :op2 (d / dog :ARG1-of (k / know-01 :ARG0 i))) :polarity -) :snt2 (s / see-01 :ARG0 i :ARG1 d))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "not",
+            "arg": {
+              "op": "or",
+              "args": [
+                {
+                  "op": "atom",
+                  "id": "x1"
+                },
+                {
+                  "op": "and",
+                  "args": [
+                    {
+                      "op": "atom",
+                      "id": "x4"
+                    },
+                    {
+                      "op": "atom",
+                      "id": "x2"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x3"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "cat",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i want cat"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "know-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i know dog"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "see-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i see dog"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "dog",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i want dog"
+        }
+      ]
+    }
+  },
+  {
+    "name": "intentional_event_reference",
+    "raw_amr": "(m / multi-sentence :snt1 (o / or :op1 (r / run-01 :ARG0 (b / boy)) :op2 (s / sing-01 :ARG0 b)) :snt2 r)",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "or",
+            "args": [
+              {
+                "op": "atom",
+                "id": "x1"
+              },
+              {
+                "op": "atom",
+                "id": "x2"
+              }
+            ]
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "run-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "boy",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "boy run"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "sing-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "boy",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "boy sing"
+        }
+      ]
+    }
+  },
+  {
+    "name": "duration",
+    "raw_amr": "(a / after :quant (t / temporal-quantity :quant 3 :unit (d / day)) :op1 (n / now))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":op1",
+            "source": {
+              "concept": "after",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "temporal-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "3",
+                              "value": 3,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "day",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "now",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "3 days after now"
+        }
+      ]
+    }
+  },
+  {
+    "name": "duration_one",
+    "raw_amr": "(a / before :quant (t / temporal-quantity :quant 1 :unit (d / week)) :op1 (n / now))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":op1",
+            "source": {
+              "concept": "before",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "temporal-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "week",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "now",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "1 week before now"
+        }
+      ]
+    }
+  },
+  {
+    "name": "duration_range",
+    "raw_amr": "(a / after :quant (t / temporal-quantity :quant (b / between :op1 3 :op2 5) :unit (d / day)) :op1 (n / now))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":op1",
+            "source": {
+              "concept": "after",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "temporal-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "node": {
+                              "concept": "between",
+                              "metadata": [
+                                {
+                                  "role": ":op1",
+                                  "value": {
+                                    "literal": {
+                                      "raw": "3",
+                                      "value": 3,
+                                      "value_type": "integer"
+                                    }
+                                  }
+                                },
+                                {
+                                  "role": ":op2",
+                                  "value": {
+                                    "literal": {
+                                      "raw": "5",
+                                      "value": 5,
+                                      "value_type": "integer"
+                                    }
+                                  }
+                                }
+                              ],
+                              "name": ""
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "day",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "now",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "between 3 and 5 days after now"
+        }
+      ]
+    }
+  },
+  {
+    "name": "quantity_almost",
+    "raw_amr": "(r / restaurant :quant (a / almost :op1 12))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "restaurant",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "almost",
+                      "metadata": [
+                        {
+                          "role": ":op1",
+                          "value": {
+                            "literal": {
+                              "raw": "12",
+                              "value": 12,
+                              "value_type": "integer"
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            }
+          },
+          "verbalization": "almost 12 restaurants exist"
+        }
+      ]
+    }
+  },
+  {
+    "name": "measured_coffee",
+    "raw_amr": "(d / drink-01 :ARG0 (m / man) :ARG1 (c / coffee :quant (v / volume-quantity :quant 1 :unit (c2 / cup))))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "coffee",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "volume-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "cup",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "drink-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "man drink 1 cup of coffee"
+        }
+      ]
+    }
+  },
+  {
+    "name": "feet_apart",
+    "raw_amr": "(s / stand-01 :ARG0 (b / boy) :location (a / apart :quant (d / distance-quantity :quant 3 :unit (f / foot))))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+location",
+            "kind": "triple",
+            "object": {
+              "concept": "apart",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "distance-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "3",
+                              "value": 3,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "foot",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "stand-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "boy",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "boy stand at 3 feet apart"
+        }
+      ]
+    }
+  },
+  {
+    "name": "foot_quantity",
+    "raw_amr": "(d / distance-quantity :quant 3 :unit (f / foot))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "distance-quantity",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "literal": {
+                      "raw": "3",
+                      "value": 3,
+                      "value_type": "integer"
+                    }
+                  }
+                },
+                {
+                  "role": ":unit",
+                  "value": {
+                    "node": {
+                      "concept": "foot",
+                      "metadata": [],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            }
+          },
+          "verbalization": "3 feet exist"
+        }
+      ]
+    }
+  },
+  {
+    "name": "quantity_complex_unit",
+    "raw_amr": "(a / after :quant (t / temporal-quantity :quant 3 :unit (d / day :mod (b / business))) :op1 (n / now))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":op1",
+            "source": {
+              "concept": "after",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "temporal-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "3",
+                              "value": 3,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "day",
+                              "metadata": [
+                                {
+                                  "role": ":mod",
+                                  "value": {
+                                    "node": {
+                                      "concept": "business",
+                                      "metadata": [],
+                                      "name": ""
+                                    }
+                                  }
+                                }
+                              ],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "now",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "temporal quantity after now"
+        }
+      ]
+    }
+  },
+  {
+    "name": "pronoun",
+    "raw_amr": "(c / car :poss (s / she))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":poss",
+            "source": {
+              "concept": "car",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "she",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "her car"
+        }
+      ]
+    }
+  },
+  {
+    "name": "plural_possessor",
+    "raw_amr": "(b / bright-02 :ARG1 (c / clothes :poss (s / she)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:participant_possessor",
+            "subject": {
+              "concept": "bright-02",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "clothes",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "she",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "bright-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "clothes",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":poss",
+                "source": {
+                  "concept": "clothes",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "she",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "her clothes are bright"
+        }
+      ]
+    }
+  },
+  {
+    "name": "adjective",
+    "raw_amr": "(f / funny-02 :ARG1 (h / he) :degree (r / really))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:attribute_degree",
+            "subject": {
+              "concept": "he",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "funny-02",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "really",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "funny-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "he",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":degree",
+                "source": {
+                  "concept": "funny-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "really",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "he is really funny"
+        }
+      ]
+    }
+  },
+  {
+    "name": "real_verb_passive",
+    "raw_amr": "(w / wash-01 :ARG1 (h / he))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "wash-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "he",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "he is washed"
+        }
+      ]
+    }
+  },
+  {
+    "name": "negative_passive_agreement",
+    "raw_amr": "(w / wash-01 :ARG1 (y / you) :polarity -)",
+    "frame": {
+      "formula_ast": {
+        "op": "not",
+        "arg": {
+          "op": "atom",
+          "id": "x1"
+        }
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "wash-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "you",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "you are washed"
+        }
+      ]
+    }
+  },
+  {
+    "name": "positive_passive_agreement",
+    "raw_amr": "(w / wash-01 :ARG1 (y / you))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x1"
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "wash-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "you",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "you are washed"
+        }
+      ]
+    }
+  },
+  {
+    "name": "condition_modifier",
+    "raw_amr": "(h / have-condition-91 :ARG1 (w / win-01 :ARG0 (b / boy)) :ARG2 (r / run-01 :ARG0 b) :mod (s / still))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "implies",
+            "antecedent": {
+              "op": "atom",
+              "id": "x1"
+            },
+            "consequent": {
+              "op": "atom",
+              "id": "x2"
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x3"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "run-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "boy",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "boy run"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "win-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "boy",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "boy win"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "have-condition-91",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "still",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "still have condition"
+        }
+      ]
+    }
+  },
+  {
+    "name": "condition_focus_blocked",
+    "raw_amr": "(h / have-condition-91 :ARG1 (w / win-01) :ARG2 (r / run-01) :mod (o / only))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "have-condition-91",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "only",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "only have condition"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "run-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "have-condition-91",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "win-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "win have condition run"
+        }
+      ]
+    }
+  },
+  {
+    "name": "condition_missing_argument",
+    "raw_amr": "(h / have-condition-91 :ARG1 (w / win-01) :mod (s / still))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "have-condition-91",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "win-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "have condition win"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "have-condition-91",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "still",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "still have condition"
+        }
+      ]
+    }
+  },
+  {
+    "name": "participant_modifier",
+    "raw_amr": "(w / work-01 :ARG0 (m / man :mod (o / old)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:participant_leaf_modifier",
+            "subject": {
+              "concept": "work-01",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "man",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "old",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg0",
+                "source": {
+                  "concept": "work-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "man",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "man",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "old",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "old man work"
+        }
+      ]
+    }
+  },
+  {
+    "name": "passive_modifier",
+    "raw_amr": "(f / fulfill-01 :ARG1 (p / prophecy :mod (o / old)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:participant_leaf_modifier",
+            "subject": {
+              "concept": "fulfill-01",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "prophecy",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "old",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "fulfill-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "prophecy",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "prophecy",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "old",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "old prophecy is fulfilled"
+        }
+      ]
+    }
+  },
+  {
+    "name": "participant_possessor",
+    "raw_amr": "(f / fulfill-01 :ARG1 (p / prophecy :poss (y / you)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:participant_possessor",
+            "subject": {
+              "concept": "fulfill-01",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "prophecy",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "you",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "fulfill-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "prophecy",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":poss",
+                "source": {
+                  "concept": "prophecy",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "you",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "your prophecy is fulfilled"
+        }
+      ]
+    }
+  },
+  {
+    "name": "shared_properties",
+    "raw_amr": "(a / and :op1 (y / yellow-02 :ARG1 (b / bell)) :op2 (b2 / big :domain b))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:shared_target_properties",
+            "subject": {
+              "concept": "yellow-02",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "bell",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "big",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "yellow-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "bell",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":domain",
+                "source": {
+                  "concept": "big",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "bell",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "bell is big and yellow"
+        }
+      ]
+    }
+  },
+  {
+    "name": "shared_colors",
+    "raw_amr": "(a / and :op1 (b / brown-01 :ARG1 (d / dog)) :op2 (b2 / black-04 :ARG1 d))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:shared_target_properties",
+            "subject": {
+              "concept": "black-04",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "dog",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "brown-01",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "black-04",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "dog",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "brown-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "dog",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "dog is black and brown"
+        }
+      ]
+    }
+  },
+  {
+    "name": "located_modifier",
+    "raw_amr": "(m / man :location (o / outdoors) :mod (o2 / old))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:located_entity_modifier",
+            "subject": {
+              "concept": "outdoors",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "man",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "old",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":location",
+                "source": {
+                  "concept": "man",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "outdoors",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "man",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "old",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "old man is outdoors"
+        }
+      ]
+    }
+  },
+  {
+    "name": "spatial_by",
+    "raw_amr": "(g / girl :location (b / by :op1 (t / tree)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:spatial_path",
+            "subject": {
+              "concept": "girl",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "by",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "tree",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":location",
+                "source": {
+                  "concept": "girl",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "by",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":op1",
+                "source": {
+                  "concept": "by",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "tree",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "girl by tree"
+        }
+      ]
+    }
+  },
+  {
+    "name": "part_modifier",
+    "raw_amr": "(t / toddler :part (e / eye :mod (b / blue)))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:part_leaf_modifier",
+            "subject": {
+              "concept": "toddler",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "eye",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "blue",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":part",
+                "source": {
+                  "concept": "toddler",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "eye",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "eye",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "blue",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "blue eye is part of toddler"
+        }
+      ]
+    }
+  },
+  {
+    "name": "extended_vocabulary",
+    "raw_amr": "(b / boy :mod (l / little) :mod (b2 / blonde))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:entity_two_modifiers",
+            "subject": {
+              "concept": "blonde",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "boy",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "little",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "boy",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "blonde",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "boy",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "little",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "little blonde boy"
+        }
+      ]
+    }
+  },
+  {
+    "name": "extended_degree",
+    "raw_amr": "(f / fast-02 :ARG1 (d / dog) :degree (v / very))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:attribute_degree",
+            "subject": {
+              "concept": "dog",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "fast-02",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "very",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "fast-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "dog",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":degree",
+                "source": {
+                  "concept": "fast-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "very",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "dog is very fast"
+        }
+      ]
+    }
+  },
+  {
+    "name": "extended_joint",
+    "raw_amr": "(p / party-01 :ARG0 (m / man :quant 2) :mod (t / together))",
+    "frame": {
+      "formula_ast": {
+        "op": "atom",
+        "id": "x3"
+      },
+      "atoms": [
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:event_simple_modifier",
+            "subject": {
+              "concept": "man",
+              "name": "",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "literal": {
+                      "raw": "2",
+                      "value": 2,
+                      "value_type": "integer"
+                    }
+                  }
+                }
+              ]
+            },
+            "predicate": {
+              "concept": "party-01",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "together",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg0",
+                "source": {
+                  "concept": "party-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "man",
+                    "metadata": [
+                      {
+                        "role": ":quant",
+                        "value": {
+                          "literal": {
+                            "raw": "2",
+                            "value": 2,
+                            "value_type": "integer"
+                          }
+                        }
+                      }
+                    ],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":mod",
+                "source": {
+                  "concept": "party-01",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "together",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "2 men party together"
+        }
+      ]
+    }
+  },
+  {
+    "name": "existing_triple_not_four",
+    "raw_amr": "(d / drive-01 :ARG0 (m / man) :ARG1 (c / car :mod (b / blue)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "car",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "blue",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "blue car"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "car",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "drive-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "man drive car"
+        }
+      ]
+    }
+  },
+  {
+    "name": "negative_modifier_blocked",
+    "raw_amr": "(w / work-01 :ARG0 (m / man :mod (o / old :polarity -)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "not",
+            "arg": {
+              "op": "atom",
+              "id": "x2"
+            }
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "work-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "man",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "man work"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "old",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "old man"
+        }
+      ]
+    }
+  },
+  {
+    "name": "nonintersective_blocked",
+    "raw_amr": "(w / work-01 :ARG0 (m / man :mod (f / fake)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "work-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "man",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "man work"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "man",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "fake",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "fake man"
+        }
+      ]
+    }
+  },
+  {
+    "name": "properties_or_blocked",
+    "raw_amr": "(o / or :op1 (b / blue-02 :ARG1 (c / car)) :op2 (s / small-02 :ARG1 c))",
+    "frame": {
+      "formula_ast": {
+        "op": "or",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "blue-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "car",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "car is blue"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "small-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "car",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "car is small"
+        }
+      ]
+    }
+  },
+  {
+    "name": "properties_negative_blocked",
+    "raw_amr": "(a / and :op1 (b / blue-02 :ARG1 (c / car) :polarity -) :op2 (s / small-02 :ARG1 c))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "not",
+            "arg": {
+              "op": "atom",
+              "id": "x1"
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "blue-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "car",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "car is blue"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "small-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "car",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "car is small"
+        }
+      ]
+    }
+  },
+  {
+    "name": "properties_degree_blocked",
+    "raw_amr": "(a / and :op1 (b / blue-02 :ARG1 (c / car) :degree (v / very)) :op2 (s / small-02 :ARG1 c))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x4"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "small-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "car",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "car is small"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "triple-v1.2",
+            "kind": "triple",
+            "join_signature": "ordinary:attribute_degree",
+            "subject": {
+              "concept": "car",
+              "name": "",
+              "metadata": []
+            },
+            "predicate": {
+              "concept": "blue-02",
+              "name": "",
+              "metadata": []
+            },
+            "object": {
+              "concept": "very",
+              "name": "",
+              "metadata": []
+            },
+            "subject_object_coreference": "distinct",
+            "components": [
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":arg1",
+                "source": {
+                  "concept": "blue-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "car",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              },
+              {
+                "type": "dyad-v1.2",
+                "coreference": "distinct",
+                "kind": "dyadic",
+                "role": ":degree",
+                "source": {
+                  "concept": "blue-02",
+                  "metadata": [],
+                  "name": ""
+                },
+                "target": {
+                  "node": {
+                    "concept": "very",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              }
+            ]
+          },
+          "verbalization": "car is very blue"
+        }
+      ]
+    }
+  },
+  {
+    "name": "condition_no_cross_merge",
+    "raw_amr": "(w / work-01 :ARG0 (m / man) :condition (o / old :domain m))",
+    "frame": {
+      "formula_ast": {
+        "op": "implies",
+        "antecedent": {
+          "op": "atom",
+          "id": "x2"
+        },
+        "consequent": {
+          "op": "atom",
+          "id": "x1"
+        }
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "work-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "man",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "man work"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "old",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "man",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "man is old"
+        }
+      ]
+    }
+  },
+  {
+    "name": "nonfactive_stays_disclosed",
+    "raw_amr": "(h / hope-01 :ARG0 (i / i) :ARG1 (c / call-02 :ARG0 (y / you)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "call-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "you",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "you call"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "call-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "hope-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i hope call"
+        }
+      ]
+    }
+  },
+  {
+    "name": "corpus_133734",
+    "raw_amr": "# ::tok they 'll continue it you know throughout the rest of the city but it 's not i think originally people thought it would be profitable for cities to do this and it 's not going to be i do n't think\n(m / multi-sentence~1\n    :snt1 (c4 / contrast-01~12\n        :ARG1 (c3 / continue-01~2\n            :ARG0 (t / they~0)\n            :ARG1 (i2 / it~3)\n            :ARG1-of (k / know-01~5\n                :ARG0 (y / you~4))\n            :location (t6 / throughout~6\n                :op1 (r / rest~8\n                    :part-of (c / city~11)))))\n    :snt2 (a / and~30\n        :op1 m\n        :op2 (t3 / think-01~20\n            :ARG0 (p / person~19)\n            :ARG1 (p2 / profitable-02~24\n                :ARG1 (d / do-02~28\n                    :ARG0 (c2 / city~26)\n                    :ARG1 (t5 / this~29))\n                :polarity -~15)\n            :time (o / original~18)))\n    :snt2 (t4 / think-01~40\n        :ARG0 (t2 / think-01~17\n            :ARG0 (i / i~16))\n        :ARG1 t3\n        :polarity -~39))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x7"
+          },
+          {
+            "op": "atom",
+            "id": "x11"
+          },
+          {
+            "op": "atom",
+            "id": "x4"
+          },
+          {
+            "op": "atom",
+            "id": "x5"
+          },
+          {
+            "op": "atom",
+            "id": "x6"
+          },
+          {
+            "op": "not",
+            "arg": {
+              "op": "and",
+              "args": [
+                {
+                  "op": "atom",
+                  "id": "x9"
+                },
+                {
+                  "op": "atom",
+                  "id": "x1"
+                },
+                {
+                  "op": "atom",
+                  "id": "x8"
+                },
+                {
+                  "op": "atom",
+                  "id": "x12"
+                },
+                {
+                  "op": "not",
+                  "arg": {
+                    "op": "and",
+                    "args": [
+                      {
+                        "op": "atom",
+                        "id": "x3"
+                      },
+                      {
+                        "op": "atom",
+                        "id": "x10"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "i",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "i think"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "contrast-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "continue-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "continue is contrasted"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "profitable-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "do-02",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "profitable originates from do"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":op1",
+            "source": {
+              "concept": "throughout",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "rest",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "throughout rest"
+        },
+        {
+          "id": "x5",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":part",
+            "source": {
+              "concept": "city",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "rest",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "rest is part of city"
+        },
+        {
+          "id": "x6",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "continue-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "know-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "you",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "you know continue"
+        },
+        {
+          "id": "x7",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "it",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "continue-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "they",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "they continue it"
+        },
+        {
+          "id": "x8",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "profitable-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "person",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "person think profitable"
+        },
+        {
+          "id": "x9",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "think think think"
+        },
+        {
+          "id": "x10",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "this",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "do-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "city",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "city do this"
+        },
+        {
+          "id": "x11",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+location",
+            "kind": "triple",
+            "object": {
+              "concept": "throughout",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "continue-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "they",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "they continue at throughout"
+        },
+        {
+          "id": "x12",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+time",
+            "kind": "triple",
+            "object": {
+              "concept": "original",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "think-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "person",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "person think during original"
+        }
+      ]
+    }
+  },
+  {
+    "name": "corpus_148281",
+    "raw_amr": "# ::tok yeah that 's uh i i did a had to paint the uh my brick my house is brick on the outside except for the overhangs and you know like a a little bit of uh what do you call the the eaves and stuff and uh\n(m / multi-sentence~2\n    :mod (y / yeah~0)\n    :rel (o / obligate-01~8\n        :ARG1 (i2 / i~5)\n        :ARG2 (p / paint-01~10\n            :ARG0 i2\n            :ARG1 (b2 / brick~14\n                :poss i2)))\n    :rel (t / that~1)\n    :rel (i / i~4)\n    :snt1 y\n    :snt2 (d / do-02~6\n        :ARG0 i2\n        :snt3 (a / and~26\n            :ARG1-of (r / resemble-01~29\n                :ARG1-of (k / know-01~28\n                    :ARG0 (y2 / you~27))\n                :ARG2 (b / bit~33\n                    :ARG1-of (c / call-01~39\n                        :ARG0 y2\n                        :ARG2 (a2 / and~43\n                            :op1 (e / eaves~42)\n                            :op2 (s / stuff~44)))\n                    :mod (l / little~32)))\n            :op1 d\n            :op2 (b3 / brick~18\n                :ARG2-of (e2 / except-01~22\n                    :ARG1 (o3 / overhang~25))\n                :domain (h / house~16\n                    :poss b2)\n                :location (o2 / outside~21)))))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x7"
+          },
+          {
+            "op": "atom",
+            "id": "x16"
+          },
+          {
+            "op": "atom",
+            "id": "x15"
+          },
+          {
+            "op": "atom",
+            "id": "x9"
+          },
+          {
+            "op": "atom",
+            "id": "x4"
+          },
+          {
+            "op": "atom",
+            "id": "x17"
+          },
+          {
+            "op": "atom",
+            "id": "x6"
+          },
+          {
+            "op": "atom",
+            "id": "x13"
+          },
+          {
+            "op": "atom",
+            "id": "x3"
+          },
+          {
+            "op": "atom",
+            "id": "x8"
+          },
+          {
+            "op": "atom",
+            "id": "x11"
+          },
+          {
+            "op": "atom",
+            "id": "x12"
+          },
+          {
+            "op": "atom",
+            "id": "x10"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x5"
+          },
+          {
+            "op": "atom",
+            "id": "x14"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "brick",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "house",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "house is brick"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":location",
+            "source": {
+              "concept": "brick",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "outside",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "brick occurs at outside"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "bit",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "little",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "little bit"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":poss",
+            "source": {
+              "concept": "brick",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "i",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "my brick"
+        },
+        {
+          "id": "x5",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":poss",
+            "source": {
+              "concept": "house",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "brick",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "brick's house"
+        },
+        {
+          "id": "x6",
+          "expression": {
+            "type": "opaque-v1.2",
+            "kind": "opaque",
+            "role": "arg0",
+            "source": {
+              "args": [
+                {
+                  "node": {
+                    "concept": "and",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              ],
+              "op": "do"
+            },
+            "target": {
+              "node": {
+                "concept": "i",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "i and"
+        },
+        {
+          "id": "x7",
+          "expression": {
+            "type": "opaque-v1.2",
+            "kind": "opaque",
+            "role": "mod",
+            "source": {
+              "args": [
+                {
+                  "node": {
+                    "concept": "i",
+                    "metadata": [],
+                    "name": ""
+                  }
+                },
+                {
+                  "node": {
+                    "concept": "obligate-01",
+                    "metadata": [],
+                    "name": ""
+                  }
+                },
+                {
+                  "node": {
+                    "concept": "that",
+                    "metadata": [],
+                    "name": ""
+                  }
+                },
+                {
+                  "node": {
+                    "concept": "yeah",
+                    "metadata": [],
+                    "name": ""
+                  }
+                },
+                {
+                  "args": [
+                    {
+                      "node": {
+                        "concept": "and",
+                        "metadata": [],
+                        "name": ""
+                      }
+                    }
+                  ],
+                  "op": "do"
+                }
+              ],
+              "op": "and"
+            },
+            "target": {
+              "node": {
+                "concept": "yeah",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "yeah i obligate that yeah and"
+        },
+        {
+          "id": "x8",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "bit",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "call-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "you",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "you call bit"
+        },
+        {
+          "id": "x9",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "brick",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "paint-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i paint brick"
+        },
+        {
+          "id": "x10",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "resemble-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "know-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "you",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "you know resemble"
+        },
+        {
+          "id": "x11",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "eaves",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "call-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "you",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "you call eaves"
+        },
+        {
+          "id": "x12",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "stuff",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "call-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "you",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "you call stuff"
+        },
+        {
+          "id": "x13",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "bit",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "resemble-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "and",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "and resemble from bit"
+        },
+        {
+          "id": "x14",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "brick",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "except-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "overhang",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "overhang except from brick"
+        },
+        {
+          "id": "x15",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "paint-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "obligate-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i obligate paint"
+        },
+        {
+          "id": "x16",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "i exists"
+        },
+        {
+          "id": "x17",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "that",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "that exists"
+        }
+      ]
+    }
+  },
+  {
+    "name": "corpus_158789",
+    "raw_amr": "# ::tok MANAGERIAL COST ACCOUNTING SYSTEM - The organization and procedures , whether automated or not , and whether part of the general ledger or stand - alone , that accumulates and reports consistent and reliable cost information and performance data from various agency feeder systems .\n(m2 / multi-sentence~4\n    :rel (o / or~12\n        :op1 (a7 / automate-01~11\n            :ARG1 (a4 / and~7\n                :ARG0-of (a2 / accumulate-01~28)\n                :ARG0-of (r2 / report-01~30\n                    :ARG1 (a6 / and~32\n                        :ARG1-of (r / rely-01~33\n                            :ARG1-of (p3 / possible-01~29))\n                        :op1 (i / information~35\n                            :ARG1-of (c / consistent-02~31)\n                            :topic (c3 / cost-01~34))\n                        :op2 (d / data~38\n                            :topic (p2 / perform-02~37))\n                        :source (s3 / system~43\n                            :ARG0-of (f / feed-01~42)\n                            :mod (a3 / agency~41))))\n                :op1 (o2 / organize-01~6)\n                :op2 (p4 / procedure~8))\n            :polarity -~13)\n        :op2 (p / part~17\n            :domain a4\n            :part-of (l / ledger~21\n                :ARG1-of (g / general-02~20))))\n    :rel (a5 / and~15\n        :op1 a7\n        :op3 (s / stand-alone~23\n            :domain a4))\n    :rel (v / various~40)\n    :snt1 (s2 / system~3\n        :mod (a / account-01~2\n            :ARG1 (c2 / cost-01~1))\n        :mod (m / manage-01~0))\n    :snt2 a4)",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "not",
+            "arg": {
+              "op": "and",
+              "args": [
+                {
+                  "op": "atom",
+                  "id": "x4"
+                },
+                {
+                  "op": "atom",
+                  "id": "x21"
+                },
+                {
+                  "op": "atom",
+                  "id": "x22"
+                }
+              ]
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x11"
+          },
+          {
+            "op": "atom",
+            "id": "x21"
+          },
+          {
+            "op": "atom",
+            "id": "x22"
+          },
+          {
+            "op": "or",
+            "args": [
+              {
+                "op": "not",
+                "arg": {
+                  "op": "and",
+                  "args": [
+                    {
+                      "op": "atom",
+                      "id": "x4"
+                    },
+                    {
+                      "op": "atom",
+                      "id": "x21"
+                    },
+                    {
+                      "op": "atom",
+                      "id": "x22"
+                    }
+                  ]
+                }
+              },
+              {
+                "op": "and",
+                "args": [
+                  {
+                    "op": "atom",
+                    "id": "x10"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x21"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x22"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x15"
+                  },
+                  {
+                    "op": "atom",
+                    "id": "x6"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "op": "atom",
+            "id": "x23"
+          },
+          {
+            "op": "atom",
+            "id": "x12"
+          },
+          {
+            "op": "atom",
+            "id": "x14"
+          },
+          {
+            "op": "atom",
+            "id": "x3"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x18"
+          },
+          {
+            "op": "atom",
+            "id": "x9"
+          },
+          {
+            "op": "atom",
+            "id": "x17"
+          },
+          {
+            "op": "atom",
+            "id": "x20"
+          },
+          {
+            "op": "atom",
+            "id": "x5"
+          },
+          {
+            "op": "atom",
+            "id": "x8"
+          },
+          {
+            "op": "atom",
+            "id": "x16"
+          },
+          {
+            "op": "atom",
+            "id": "x19"
+          },
+          {
+            "op": "atom",
+            "id": "x13"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x7"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "accumulate-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "and",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "and accumulate"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "feed-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "system",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "system feed"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "account-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "cost-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "cost is accounted"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "automate-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "and",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "and is automated"
+        },
+        {
+          "id": "x5",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "consistent-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "information",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "information is consistented"
+        },
+        {
+          "id": "x6",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "general-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "ledger",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "ledger is generaled"
+        },
+        {
+          "id": "x7",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "possible-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "rely-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "rely possible"
+        },
+        {
+          "id": "x8",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "rely-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "data",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "data is relied"
+        },
+        {
+          "id": "x9",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "rely-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "information",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "information is relied"
+        },
+        {
+          "id": "x10",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "part",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "and",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "and is part"
+        },
+        {
+          "id": "x11",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "stand-alone",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "and",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "and is stand alone"
+        },
+        {
+          "id": "x12",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "system",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "account-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "account system"
+        },
+        {
+          "id": "x13",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "system",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "agency",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "agency system"
+        },
+        {
+          "id": "x14",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "system",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "manage-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "manage system"
+        },
+        {
+          "id": "x15",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":part",
+            "source": {
+              "concept": "ledger",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "part",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "part is part of ledger"
+        },
+        {
+          "id": "x16",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":topic",
+            "source": {
+              "concept": "data",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "perform-02",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "data is about perform"
+        },
+        {
+          "id": "x17",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":topic",
+            "source": {
+              "concept": "information",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "cost-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "information is about cost"
+        },
+        {
+          "id": "x18",
+          "expression": {
+            "type": "opaque-v1.2",
+            "kind": "opaque",
+            "role": "source",
+            "source": {
+              "args": [
+                {
+                  "node": {
+                    "concept": "information",
+                    "metadata": [],
+                    "name": ""
+                  }
+                },
+                {
+                  "node": {
+                    "concept": "data",
+                    "metadata": [],
+                    "name": ""
+                  }
+                }
+              ],
+              "op": "and"
+            },
+            "target": {
+              "node": {
+                "concept": "system",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "information data originates from system"
+        },
+        {
+          "id": "x19",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "data",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "report-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "and",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "and report data"
+        },
+        {
+          "id": "x20",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "information",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "report-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "and",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "and report information"
+        },
+        {
+          "id": "x21",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "organize-01",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "organize occurs"
+        },
+        {
+          "id": "x22",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "procedure",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "procedure exists"
+        },
+        {
+          "id": "x23",
+          "expression": {
+            "type": "unary-v1.2",
+            "kind": "unary",
+            "node": {
+              "concept": "various",
+              "metadata": [],
+              "name": ""
+            }
+          },
+          "verbalization": "various exists"
+        }
+      ]
+    }
+  },
+  {
+    "name": "corpus_169731",
+    "raw_amr": "# ::tok and then uh oh no let 's see i went someplace i ca n't remember the name of it some other place we went um but we went to one and they serve you i mean the hamburger was a pound of meat\n(a / and~0\n    :op2 (m4 / multi-sentence~3\n        :snt1 a\n        :snt2 (p2 / possible-01~12\n            :ARG1 (r / remember-01~14\n                :ARG0 (i / i~8)\n                :ARG1 (t2 / thing~16\n                    :ARG2-of (n / name-01~16\n                        :ARG1 (s4 / someplace~10))))\n            :polarity -~13)\n        :snt3 (c / contrast-01~25\n            :ARG1 (g2 / go-02~23\n                :ARG0 (w2 / we~22)\n                :ARG4 (p / place~21\n                    :mod (o / other~20)\n                    :mod (s3 / some~19)))\n            :ARG2 (a2 / and~30\n                :op1 (g3 / go-02~27\n                    :ARG0 w2\n                    :ARG4 p)\n                :op2 (s2 / serve-02~32\n                    :ARG0 w2\n                    :ARG2 p)))\n        :snt4 (m2 / mean-01~35\n            :ARG0 m4\n            :ARG2 (m3 / meat~42\n                :quant (m / mass-quantity~40\n                    :quant 1~40\n                    :unit (p3 / pound~40))\n                :domain (h / hamburger~37))))\n    :op2 (g / go-02~9\n        :ARG0 i\n        :ARG1-of (s / see-01~7\n            :ARG0 (w / we~5)\n            :mode imperative~5)\n        :ARG4 s4\n        :time (t / then~1))\n    :rel (u / uh~2\n        :mode expressive~2))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x6"
+          },
+          {
+            "op": "atom",
+            "id": "x9"
+          },
+          {
+            "op": "atom",
+            "id": "x14"
+          },
+          {
+            "op": "atom",
+            "id": "x3"
+          },
+          {
+            "op": "atom",
+            "id": "x4"
+          },
+          {
+            "op": "atom",
+            "id": "x15"
+          },
+          {
+            "op": "atom",
+            "id": "x18"
+          },
+          {
+            "op": "atom",
+            "id": "x13"
+          },
+          {
+            "op": "atom",
+            "id": "x19"
+          },
+          {
+            "op": "atom",
+            "id": "x16"
+          },
+          {
+            "op": "atom",
+            "id": "x17"
+          },
+          {
+            "op": "atom",
+            "id": "x20"
+          },
+          {
+            "op": "atom",
+            "id": "x5"
+          },
+          {
+            "op": "atom",
+            "id": "x7"
+          },
+          {
+            "op": "atom",
+            "id": "x10"
+          },
+          {
+            "op": "atom",
+            "id": "x12"
+          },
+          {
+            "op": "not",
+            "arg": {
+              "op": "and",
+              "args": [
+                {
+                  "op": "atom",
+                  "id": "x1"
+                },
+                {
+                  "op": "atom",
+                  "id": "x11"
+                },
+                {
+                  "op": "atom",
+                  "id": "x8"
+                }
+              ]
+            }
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x8"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "possible-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "remember-01",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "remember possible"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "meat",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "mass-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "pound",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "hamburger",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "hamburger is 1 pound of meat"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "place",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "other",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "other place"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":mod",
+            "source": {
+              "concept": "place",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "some",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "some place"
+        },
+        {
+          "id": "x5",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "literal",
+            "kind": "dyadic",
+            "role": ":mode",
+            "source": {
+              "concept": "see-01",
+              "metadata": [
+                {
+                  "role": ":mode",
+                  "value": {
+                    "literal": {
+                      "raw": "imperative",
+                      "value": "imperative",
+                      "value_type": "symbol"
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "literal": {
+                "raw": "imperative",
+                "value": "imperative",
+                "value_type": "symbol"
+              }
+            }
+          },
+          "verbalization": "see has imperative mode"
+        },
+        {
+          "id": "x6",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "literal",
+            "kind": "dyadic",
+            "role": ":mode",
+            "source": {
+              "concept": "uh",
+              "metadata": [
+                {
+                  "role": ":mode",
+                  "value": {
+                    "literal": {
+                      "raw": "expressive",
+                      "value": "expressive",
+                      "value_type": "symbol"
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "target": {
+              "literal": {
+                "raw": "expressive",
+                "value": "expressive",
+                "value_type": "symbol"
+              }
+            }
+          },
+          "verbalization": "uh has expressive mode"
+        },
+        {
+          "id": "x7",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "see-01",
+              "metadata": [
+                {
+                  "role": ":mode",
+                  "value": {
+                    "literal": {
+                      "raw": "imperative",
+                      "value": "imperative",
+                      "value_type": "symbol"
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "subject": {
+              "concept": "we",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "we see go"
+        },
+        {
+          "id": "x8",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "thing",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "remember-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i remember thing"
+        },
+        {
+          "id": "x9",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "meat",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "mass-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "pound",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "mean-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "contrast-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "contrast mean 1 pound of meat"
+        },
+        {
+          "id": "x10",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "meat",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "mass-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "pound",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "mean-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "mean-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "mean mean 1 pound of meat"
+        },
+        {
+          "id": "x11",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "meat",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "mass-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "pound",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "mean-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "possible-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "possible mean 1 pound of meat"
+        },
+        {
+          "id": "x12",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "meat",
+              "metadata": [
+                {
+                  "role": ":quant",
+                  "value": {
+                    "node": {
+                      "concept": "mass-quantity",
+                      "metadata": [
+                        {
+                          "role": ":quant",
+                          "value": {
+                            "literal": {
+                              "raw": "1",
+                              "value": 1,
+                              "value_type": "integer"
+                            }
+                          }
+                        },
+                        {
+                          "role": ":unit",
+                          "value": {
+                            "node": {
+                              "concept": "pound",
+                              "metadata": [],
+                              "name": ""
+                            }
+                          }
+                        }
+                      ],
+                      "name": ""
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "mean-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "uh",
+              "metadata": [
+                {
+                  "role": ":mode",
+                  "value": {
+                    "literal": {
+                      "raw": "expressive",
+                      "value": "expressive",
+                      "value_type": "symbol"
+                    }
+                  }
+                }
+              ],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "uh mean 1 pound of meat"
+        },
+        {
+          "id": "x13",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "place",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "serve-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "we",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "we serve to place"
+        },
+        {
+          "id": "x14",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg4",
+            "kind": "triple",
+            "object": {
+              "concept": "place",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "we",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "we go to place"
+        },
+        {
+          "id": "x15",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg4",
+            "kind": "triple",
+            "object": {
+              "concept": "place",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "we",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "we go to place"
+        },
+        {
+          "id": "x16",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg4",
+            "kind": "triple",
+            "object": {
+              "concept": "someplace",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i go to someplace"
+        },
+        {
+          "id": "x17",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+time",
+            "kind": "triple",
+            "object": {
+              "concept": "then",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i go during then"
+        },
+        {
+          "id": "x18",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "contrast-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "go contrast at go"
+        },
+        {
+          "id": "x19",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "serve-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "contrast-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "go-02",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "go contrast at serve"
+        },
+        {
+          "id": "x20",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg1+arg2",
+            "kind": "triple",
+            "object": {
+              "concept": "thing",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "name-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "someplace",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "someplace name thing"
+        }
+      ]
+    }
+  },
+  {
+    "name": "content_0",
+    "raw_amr": "(h / hope-01 :ARG0 (i / i) :ARG1 (c / call-02 :ARG0 (y / you)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "call-02",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "you",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "you call"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "call-02",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "hope-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i hope call"
+        }
+      ]
+    }
+  },
+  {
+    "name": "content_1",
+    "raw_amr": "(b / believe-01 :ARG0 (i / i) :ARG1 (w / want-01 :ARG0 (h / he) :ARG1 (l / leave-01 :ARG0 h)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x3"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          },
+          {
+            "op": "atom",
+            "id": "x1"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "leave-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "he",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "he leave"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "leave-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "he",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "he want leave"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "want-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "believe-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i believe want"
+        }
+      ]
+    }
+  },
+  {
+    "name": "content_2",
+    "raw_amr": "(s / say-01 :ARG0 (h / he) :ARG1 (r / rain-01 :polarity -))",
+    "frame": {
+      "formula_ast": {
+        "op": "not",
+        "arg": {
+          "op": "atom",
+          "id": "x1"
+        }
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "rain-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "say-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "he",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "he say rain"
+        }
+      ]
+    }
+  },
+  {
+    "name": "content_3",
+    "raw_amr": "(p / possible-01 :ARG1 (a / artist :domain (h / he)))",
+    "frame": {
+      "formula_ast": {
+        "op": "and",
+        "args": [
+          {
+            "op": "atom",
+            "id": "x1"
+          },
+          {
+            "op": "atom",
+            "id": "x2"
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg1",
+            "source": {
+              "concept": "possible-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "artist",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "artist possible"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":domain",
+            "source": {
+              "concept": "artist",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "he",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "he is artist"
+        }
+      ]
+    }
+  },
+  {
+    "name": "content_4",
+    "raw_amr": "(s / say-01 :ARG0 (i / i) :ARG1 (o / or :op1 (r / run-01 :ARG0 i) :op2 (w / walk-01 :ARG0 i)))",
+    "frame": {
+      "formula_ast": {
+        "op": "or",
+        "args": [
+          {
+            "op": "and",
+            "args": [
+              {
+                "op": "atom",
+                "id": "x1"
+              },
+              {
+                "op": "atom",
+                "id": "x3"
+              }
+            ]
+          },
+          {
+            "op": "and",
+            "args": [
+              {
+                "op": "atom",
+                "id": "x2"
+              },
+              {
+                "op": "atom",
+                "id": "x4"
+              }
+            ]
+          }
+        ]
+      },
+      "atoms": [
+        {
+          "id": "x1",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "run-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "i",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "i run"
+        },
+        {
+          "id": "x2",
+          "expression": {
+            "type": "dyad-v1.2",
+            "coreference": "distinct",
+            "kind": "dyadic",
+            "role": ":arg0",
+            "source": {
+              "concept": "walk-01",
+              "metadata": [],
+              "name": ""
+            },
+            "target": {
+              "node": {
+                "concept": "i",
+                "metadata": [],
+                "name": ""
+              }
+            }
+          },
+          "verbalization": "i walk"
+        },
+        {
+          "id": "x3",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "run-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "say-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i say run"
+        },
+        {
+          "id": "x4",
+          "expression": {
+            "type": "triple-v1.2",
+            "join_signature": "arg0+arg1",
+            "kind": "triple",
+            "object": {
+              "concept": "walk-01",
+              "metadata": [],
+              "name": ""
+            },
+            "predicate": {
+              "concept": "say-01",
+              "metadata": [],
+              "name": ""
+            },
+            "subject": {
+              "concept": "i",
+              "metadata": [],
+              "name": ""
+            },
+            "subject_object_coreference": "distinct"
+          },
+          "verbalization": "i say walk"
+        }
+      ]
+    }
+  }
+]

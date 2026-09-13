@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Resource integrity checks require the original bytes on every platform.
+amr_translator/resources/propbank/* -text
