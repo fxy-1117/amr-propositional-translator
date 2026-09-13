@@ -52,6 +52,9 @@ limitations describe unresolved cases.
 Nonfactual and reported content have limited semantic support; consult the
 diagnostics returned by `translate_with_audit`.
 
+See the [technical reference](docs/translation.md) for construction rules,
+template tables, scope guards, and worked examples.
+
 ## Resources and tests
 
 The package includes a pinned PropBank role index and its upstream notices in
