@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this translator in your research, please cite the preprint below."
+title: "AMR-to-propositional translator"
+authors:
+  - family-names: "Feng"
+    given-names: "Xuyao"
+repository-code: "https://github.com/fxy-1117/amr-propositional-translator"
+license: MIT
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Feng"
+      given-names: "Xuyao"
+    - family-names: "Bikakis"
+      given-names: "Antonis"
+  title: "Pairwise Logical Selection of Enthymeme Completions under Semantic-Link Uncertainty"
+  journal: "arXiv preprint arXiv:2608.18820"
+  year: 2026
+  doi: "10.48550/arXiv.2608.18820"
+  url: "https://arxiv.org/abs/2608.18820"

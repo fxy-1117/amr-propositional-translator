@@ -103,6 +103,25 @@ The four `corpus_*` fixtures contain parser-generated AMRs for premise sentences
 from the MultiNLI training split. Additional checks cover merge ownership,
 JSON audits, input validation, and the fixed API.
 
+## Citation
+
+If you use this translator in your research, please cite the following preprint:
+
+Xuyao Feng and Antonis Bikakis. 2026.
+[Pairwise Logical Selection of Enthymeme Completions under Semantic-Link Uncertainty](https://arxiv.org/abs/2608.18820).
+arXiv:2608.18820.
+
+```bibtex
+@article{feng2026pairwise,
+  title = {Pairwise Logical Selection of Enthymeme Completions under Semantic-Link Uncertainty},
+  author = {Feng, Xuyao and Bikakis, Antonis},
+  journal = {arXiv preprint arXiv:2608.18820},
+  year = {2026},
+  doi = {10.48550/arXiv.2608.18820},
+  url = {https://arxiv.org/abs/2608.18820}
+}
+```
+
 ## License
 
 The original Python code and documentation are released under the
