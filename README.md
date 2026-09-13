@@ -1,6 +1,6 @@
 # AMR-to-propositional translator
 
-A deterministic translator from a PENMAN AMR graph to a propositional formula,
+A rule-based translator from a PENMAN AMR graph to a propositional formula,
 structured atoms, and atom verbalizations. The translator is a standalone
 Python package with bundled lexical resources.
 
