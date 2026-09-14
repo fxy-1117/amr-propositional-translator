@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this translator in your research, please cite the preprint below."
-title: "AMR-to-propositional translator"
+title: "Abstract Meaning Representation to Propositional Logic Translator"
 authors:
   - family-names: "Feng"
     given-names: "Xuyao"
-repository-code: "https://github.com/fxy-1117/amr-propositional-translator"
+repository-code: "https://github.com/fxy-1117/amr-to-propositional-logic"
 license: MIT
 preferred-citation:
   type: article

@@ -1,4 +1,4 @@
-# AMR-to-propositional translator
+# Abstract Meaning Representation to Propositional Logic Translator
 
 A rule-based Python translator from PENMAN AMR graphs to propositional formulas
 and structured atoms with text verbalizations.
@@ -8,7 +8,7 @@ and structured atoms with text verbalizations.
 Requires Python 3.8 or later. Install from GitHub:
 
 ```shell
-python -m pip install git+https://github.com/fxy-1117/amr-propositional-translator.git
+python -m pip install git+https://github.com/fxy-1117/amr-to-propositional-logic.git
 ```
 
 ## Usage
@@ -64,8 +64,8 @@ The package includes a pinned PropBank role index and its upstream notices in
 To run the tests, clone the repository and install it:
 
 ```shell
-git clone https://github.com/fxy-1117/amr-propositional-translator.git
-cd amr-propositional-translator
+git clone https://github.com/fxy-1117/amr-to-propositional-logic.git
+cd amr-to-propositional-logic
 python -m pip install .
 python -B -m unittest discover -s tests -v
 ```
