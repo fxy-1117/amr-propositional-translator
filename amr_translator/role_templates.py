@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any, Dict, Mapping, Optional
 import re
 
 from . import primitives
@@ -551,7 +551,7 @@ def _semantic_relation(resolution: PropBankRoleResolution) -> str:
         return "unresolved"
     return {
         "EXT": "extent",
-        "PRP": "beneficiary",
+        "PRP": "purpose",
         "TMP": "time",
     }.get(function, "unresolved")
 
@@ -587,6 +587,7 @@ def _render_numbered_dyad(
         "companion": "{source} occurs with {target}",
         "opponent": "{source} occurs against {target}",
         "beneficiary": "{source} is for {target}",
+        "purpose": "{source} is for {target}",
         "result": "{source} results in {target}",
         "extent": "{source} has extent {target}",
         "cause": "{source} is caused by {target}",
@@ -698,6 +699,7 @@ _TRIPLE_RELATION_TEMPLATES: Dict[str, str] = {
     "companion": "{subject} {predicate} with {object}",
     "opponent": "{subject} {predicate} against {object}",
     "beneficiary": "{subject} {predicate} for {object}",
+    "purpose": "{subject} {predicate} for {object}",
     "result": "{subject} {predicate} {object}",
     "extent": "{subject} {predicate} by {object}",
     "cause": "{subject} {predicate} because of {object}",
@@ -722,7 +724,6 @@ def _realize_triple(
     *,
     predicate_concept: Any = "",
     fallback_surface: Optional[str] = None,
-    outer_concept: Any = "",
 ) -> SurfaceRealization:
     signature = str(join_signature or "").strip().casefold()
     fallback = _surface(
@@ -730,19 +731,6 @@ def _realize_triple(
         if fallback_surface is not None
         else "{} {} {}".format(subject, predicate, obj)
     )
-    if signature == "arg0+arg1-of":
-        resolution = resolve_numbered_role(outer_concept, "arg1")
-        return SurfaceRealization(
-            _fill(
-                "{subject} {predicate} is {object}",
-                subject=subject,
-                predicate=predicate,
-                object=obj,
-            ),
-            "triple:arg0+arg1-of:copular",
-            "event-path",
-            resolution,
-        )
     if not signature.startswith("arg0+"):
         resolution = _fallback_resolution(
             predicate_concept, signature, "unsupported-join"
@@ -795,10 +783,10 @@ def _realize_triple(
         resolution,
     )
 
-def _triple_context(
+def _triple_predicate_concept(
     atom: Mapping[str, Any],
     dyad_by_id: Mapping[str, Mapping[str, Any]],
-) -> Tuple[str, str]:
+) -> str:
     records = [
         dyad_by_id[item]
         for item in atom.get("component_dyad_ids", [])
@@ -808,27 +796,11 @@ def _triple_context(
     event_records = [
         record for record in records if str(record.get("source_node", "")) == event_id
     ]
-    predicate_concept = str(
-        next(
-            (
-                record.get("source_concept", "")
-                for record in event_records
-                if _role_key(record.get("role")) == "arg0"
-            ),
-            event_records[0].get("source_concept", "") if event_records else "",
-        )
-    )
-    outer_concept = str(
-        next(
-            (
-                record.get("source_concept", "")
-                for record in records
-                if str(record.get("source_node", "")) != event_id
-            ),
-            "",
-        )
-    )
-    return predicate_concept, outer_concept
+    return str(next(
+        (record.get("source_concept", "") for record in event_records
+         if _role_key(record.get("role")) == "arg0"),
+        event_records[0].get("source_concept", "") if event_records else "",
+    ))
 
 def _negative_triple_surface(
     atom: Mapping[str, Any],
@@ -837,14 +809,6 @@ def _negative_triple_surface(
     subject = _surface(atom.get("subject"))
     predicate = _surface(atom.get("predicate"))
     obj = _surface(atom.get("object"))
-    signature = str(atom.get("join_signature", "")).casefold()
-    if signature == "arg0+arg1-of":
-        return _fill(
-            "{subject} {predicate} is not {object}",
-            subject=subject,
-            predicate=predicate,
-            object=obj,
-        )
     positive_prefix = _surface("{} {}".format(subject, predicate))
     if realization.surface.startswith(positive_prefix):
         suffix = realization.surface[len(positive_prefix) :].strip()
@@ -864,11 +828,7 @@ def _negative_dyad_surface(
     terms = [_surface(item) for item in atom.get("terms", [])]
     if len(terms) == 2:
         source, target = terms
-        if realization.relation == "agent":
-            return _fill(
-                "{target} does not {source}", target=target, source=source
-            )
-        if realization.relation == "theme-active":
+        if realization.relation in {"agent", "theme-active"}:
             return _fill(
                 "{target} does not {source}", target=target, source=source
             )
@@ -904,7 +864,7 @@ def _signed_surface(
         return _negative_dyad_surface(atom, realization)
     return _surface("not {}".format(realization.surface))
 
-def _resurface_record(record: Dict[str, Any]) -> None:
+def _record_realization(record: Mapping[str, Any]) -> SurfaceRealization:
     terms = list(record.get("terms", []))
     if len(terms) != 2:
         raise primitives.AMRTripleValidationError(
@@ -920,27 +880,19 @@ def _resurface_record(record: Dict[str, Any]) -> None:
         source_concept=record.get("source_concept", ""),
         fallback_surface=fallback,
     )
-    record.update(
-        {
-            "surface_fallback_text": fallback,
-            "base_surface_text": realization.surface,
-            "signed_surface_text": realization.surface,
-            "nli_surface_text": realization.surface,
-            "surface_template_id": realization.template_id,
-            "surface_role_metadata": realization.metadata(),
-        }
-    )
+    return realization
 
-def _resurface_atom(
-    atom: Dict[str, Any],
+
+def _atom_realization(
+    atom: Mapping[str, Any],
     dyad_by_id: Mapping[str, Mapping[str, Any]],
-) -> None:
+) -> SurfaceRealization:
     kind = str(atom.get("kind", ""))
     fallback = _surface(
         atom.get("surface_fallback_text", atom.get("base_surface_text", ""))
     )
     if kind == "triple":
-        predicate_concept, outer_concept = _triple_context(atom, dyad_by_id)
+        predicate_concept = _triple_predicate_concept(atom, dyad_by_id)
         realization = _realize_triple(
             str(atom["subject"]),
             str(atom["predicate"]),
@@ -948,7 +900,6 @@ def _resurface_atom(
             atom.get("join_signature", ""),
             predicate_concept=predicate_concept,
             fallback_surface=fallback,
-            outer_concept=outer_concept,
         )
     elif kind in {"dyadic", "opaque"}:
         terms = list(atom.get("terms", []))
@@ -974,30 +925,8 @@ def _resurface_atom(
             source_concept=source_concept,
             fallback_surface=fallback,
         )
-    elif kind == "unary":
-        terms = list(atom.get("terms", []))
-        if len(terms) != 1:
-            raise primitives.AMRTripleValidationError(
-                "unary atom {} has invalid terms".format(atom.get("id"))
-            )
-        resolution = _fallback_resolution("", "", "unary")
-        realization = SurfaceRealization(
-            _surface(terms[0]), "unary:identity", "identity", resolution
-        )
     else:
         raise primitives.AMRTripleValidationError(
             "unsupported atom kind {!r}".format(kind)
         )
-    signed_surface = _signed_surface(atom, realization)
-    atom.update(
-        {
-            "surface_fallback_text": fallback,
-            "base_surface_text": realization.surface,
-            "signed_surface_text": signed_surface,
-            "nli_surface_text": signed_surface,
-            "surface_text": signed_surface,
-            "surface_template_id": realization.template_id,
-            "surface_role_metadata": realization.metadata(),
-            "linkable": bool(signed_surface),
-        }
-    )
+    return realization

@@ -203,10 +203,8 @@ def graph_owned_layout(graph):
 def scope_reference_view(builder, root):
     """Separate internal references and independently owned external clauses.
 
-    This is a planning view, not deletion of graph edges or assertions. The
-    original planner still checks every role, term description, owner, edge,
-    node/word bound and formula region before accepting the whole scope.
-    Unassigned inverse descriptions remain visible and can still reject it.
+    Filter inverse descriptions for merge-boundary checks without changing
+    the graph. Descriptions not owned by this context remain visible.
     """
     condition_ids = {e['id'] for e in builder._condition_edges(root)}
     agenda, seen, owned = [root], set(), set()

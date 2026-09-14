@@ -4,27 +4,23 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Set, Tuple
 import copy
-import json
-import re
 
 from penman import constant
 from penman.layout import Push
 
-from . import primitives, metadata as metadata_rules, polarity as polarity_rules, formula as formula_ops
+from . import primitives, metadata as metadata_rules, polarity as polarity_rules
 from .frame import TranslatorContractError
 from .primitives import (_node_value, _SNT_ROLE_RE, _ANCHOR_ROLES, _ordered_unique, _canonical_json, _canonical_key, _contains_not_true)
 
 
 class FlatTripleBuilder:
-    """Compile one decoded AMR graph without a staged class chain."""
+    """Compile a decoded AMR graph into atoms and a Boolean formula."""
 
     def __init__(self, graph: Any) -> None:
         self.concepts: Dict[str, str] = {}
-        self.node_order: Dict[str, int] = {}
-        for index, instance in enumerate(graph.instances()):
+        for instance in graph.instances():
             node = str(instance.source)
             self.concepts[node] = str(instance.target)
-            self.node_order[node] = index
         if not self.concepts or graph.top is None:
             raise primitives.AMRTripleConversionError("AMR graph has no rooted concept nodes")
         self.top = str(graph.top)
@@ -75,7 +71,6 @@ class FlatTripleBuilder:
         self.consumed_ids: Set[str] = set()
         self.nodes_used_as_terms: Set[str] = set()
         self.reentrant_semantic_edge_ids: Set[str] = set()
-        self._spec_serial = 0
 
         raw_attributes = list(graph.attributes())
         if len(raw_attributes) != len(self.attributes):
@@ -148,8 +143,7 @@ class FlatTripleBuilder:
             Tuple[str, str, Tuple[str, ...]], Set[str]
         ] = {}
 
-    # Supplementary "Records, Atoms, and Verbalizations": separate
-    # connective, condition, name/wiki, polarity, and metadata records
+    # Separate connective, condition, name/wiki, polarity, and metadata records
     # from semantic records before any atom is emitted.
     def _mark_structural_records(self) -> None:
         for edge in self.edges:
@@ -294,12 +288,9 @@ class FlatTripleBuilder:
         return primitives._SPACE_RE.sub(" ", " ".join(piece for piece in pieces if piece)).strip()
 
     def _add_spec(self, spec: Mapping[str, Any]) -> None:
-        self._spec_serial += 1
-        item = dict(spec)
-        item["_serial"] = self._spec_serial
-        self.atom_specs.append(item)
+        self.atom_specs.append(dict(spec))
 
-    # Supplementary triple templates: two compatible role occurrences
+    # triple templates: two compatible role occurrences
     # around one predicate become one subject-predicate-object atom while
     # retaining every contributing graph-record identifier.
     def _triple_spec(
@@ -310,7 +301,6 @@ class FlatTripleBuilder:
         predicate_node: str,
         object_node: str,
         join_signature: str,
-        composition: str,
         component_edges: Sequence[Mapping[str, Any]],
         component_dyads: Optional[Sequence[Mapping[str, Any]]] = None,
         extra_source_ids: Sequence[str] = (),
@@ -333,7 +323,6 @@ class FlatTripleBuilder:
         )
         spec = {
             "_owner": formula_owner_node or owner,
-            "_priority": 0 if composition == "same-event" else 1,
             "kind": "triple",
             "arity": 3,
             "terms": [subject, predicate, obj],
@@ -341,21 +330,15 @@ class FlatTripleBuilder:
             "predicate": predicate,
             "object": obj,
             "join_signature": join_signature,
-            "composition": composition,
+            "composition": "same-event",
             "event_occurrence_id": predicate_node,
             "governor_node": owner,
-            "outer_node": owner if composition == "event-path" else None,
+            "outer_node": None,
             "component_dyad_ids": components,
             "source_graph_record_ids": [
                 *[str(item["id"]) for item in component_edges],
                 *[str(item) for item in extra_source_ids],
             ],
-            "canonical_key": "triple:{}:{}:{}:{}".format(
-                join_signature.casefold(),
-                primitives._canonical_label(subject),
-                primitives._canonical_label(predicate),
-                primitives._canonical_label(obj),
-            ),
             "base_surface_text": primitives._SPACE_RE.sub(
                 " ", "{} {} {}".format(subject, predicate, obj)
             ).strip(),
@@ -471,7 +454,7 @@ class FlatTripleBuilder:
         return variants
 
 
-    # Supplementary active-atom rules: a semantic record that is not
+    # active-atom rules: a semantic record that is not
     # consumed by a composed triple remains a dyadic atom with its parser
     # endpoints, role, provenance, and canonical identity unchanged.
     def _active_dyad_spec(
@@ -485,7 +468,6 @@ class FlatTripleBuilder:
     ) -> Dict[str, Any]:
         spec: Dict[str, Any] = {
             "_owner": formula_owner_node or owner,
-            "_priority": 2,
             "kind": "dyadic",
             "arity": 2,
             "terms": list(record["terms"]),
@@ -550,7 +532,6 @@ class FlatTripleBuilder:
         }
         return {
             "_owner": source_node,
-            "_priority": 2,
             "kind": "opaque",
             "arity": 2,
             "terms": [source_surface, target_surface],
@@ -574,7 +555,7 @@ class FlatTripleBuilder:
         ]
 
 
-    # Supplementary polarity rules: use a signed surface only for a literal
+    # Polarity rules: use a signed surface only for a literal
     # negative occurrence outside structural scope.  Scoped negation stays
     # in the formula AST and never creates a second atom identity.
     @staticmethod
@@ -623,7 +604,7 @@ class FlatTripleBuilder:
             atom["surface_text"] = atom["signed_surface_text"]
 
     def build(self) -> Dict[str, Any]:
-        """Build only the logical state consumed by the release."""
+        """Build internal atoms, their source records, and the formula."""
 
         self._build_unary_records()
         self._build_dyadic_records()
@@ -987,7 +968,7 @@ class FlatTripleBuilder:
         return atoms
 
 
-    # Supplementary recursive formula construction: compile all graph
+    # Formula construction: compile all graph
     # roots, recover any disconnected active component, apply participant
     # polarity locally, and verify that every emitted atom occurs.
     def _build_formula(
@@ -1001,7 +982,6 @@ class FlatTripleBuilder:
         formula = primitives._combine_ast("and", parts)
         all_ids = {str(atom["id"]) for atom in atoms}
         atom_by_id = {str(atom["id"]): atom for atom in atoms}
-        orphan_roots: List[str] = []
         compiled_roots = set(roots)
         while True:
             referenced = primitives._formula_ids(formula)
@@ -1029,7 +1009,6 @@ class FlatTripleBuilder:
             for owner in candidates:
                 parts.append(self._compile_node(owner, owner_atoms, ()))
                 compiled_roots.add(owner)
-                orphan_roots.append(owner)
             formula = primitives._combine_ast("and", parts)
             if len(primitives._formula_ids(formula)) <= before:
                 raise primitives.AMRTripleConversionError(
@@ -1299,7 +1278,7 @@ class FlatTripleBuilder:
             ),
         )
 
-    # Supplementary recursive formula definition: local atoms conjoin
+    # recursive formula definition: local atoms conjoin
     # with semantic descendants, explicit and/or branches keep their
     # operator, multi-sentence branches conjoin, conditions imply the
     # owner body, and node polarity negates that completed body.
@@ -1437,7 +1416,7 @@ class FlatTripleBuilder:
             )
         return local
 
-    # Supplementary record partition: convert every non-structural edge or
+    # record partition: convert every non-structural edge or
     # attribute into a canonical dyadic record.  Mode metadata is projected
     # only when it has a supported lexical/event endpoint.
     def _build_dyadic_records(self) -> None:
@@ -1611,7 +1590,7 @@ class FlatTripleBuilder:
             if original is not None:
                 self.dyadic_records = original
 
-    # Supplementary triple templates: pair the first available core anchor
+    # triple templates: pair the first available core anchor
     # role with each other core role on the same event.  Coordinated
     # endpoints are projected branch-locally rather than merged globally.
     def _compose_same_event_triples(self) -> None:
@@ -1693,7 +1672,6 @@ class FlatTripleBuilder:
                                     predicate_node=event,
                                     object_node=object_node,
                                     join_signature=signature,
-                                    composition="same-event",
                                     component_edges=[anchor, other],
                                     component_dyads=[subject_dyad, object_dyad],
                                     extra_source_ids=[
@@ -1764,7 +1742,7 @@ class FlatTripleBuilder:
                 ordered.append(node)
         return ordered
 
-    # Supplementary participant-polarity rule: mark relation atoms whose
+    # participant-polarity rule: mark relation atoms whose
     # subject or object is explicitly negated so the later formula pass can
     # negate that occurrence without moving it between branches.
     def _prepare_participant_polarity(self) -> None:
@@ -1825,7 +1803,7 @@ class FlatTripleBuilder:
             return False
         return self._raw_has_negative_polarity(node)
 
-    # Supplementary active-atom filtering: add a unary only when the node
+    # active-atom filtering: add a unary only when the node
     # is not already represented as a term or owner, except for the narrow
     # negative-carrier cases needed to preserve an otherwise empty scope.
     def _add_required_unaries(self) -> None:
@@ -1891,7 +1869,6 @@ class FlatTripleBuilder:
             self._add_spec(
                 {
                     "_owner": node,
-                    "_priority": 3,
                     "kind": "unary",
                     "arity": 1,
                     "terms": [self.node_surface(node)],
@@ -2140,7 +2117,7 @@ class FlatTripleBuilder:
             )
         return False
 
-    # Supplementary branch isolation: atoms owned by a predicate shared
+    # Branch isolation: atoms owned by a predicate shared
     # across explicit and/or branches are rebound only to the branch whose
     # provenance contains the active occurrence.  Multi-sentence is not
     # treated as an exclusive branch.
@@ -2251,7 +2228,7 @@ class FlatTripleBuilder:
             inspected = consequent
         return bool(primitives._formula_ids(inspected))
 
-    # Supplementary scope traversal: filter shared-owner atoms and inverse
+    # scope traversal: filter shared-owner atoms and inverse
     # edges to the active branch before recursion.  Structural cycles fail;
     # ordinary semantic reentrancies are recorded and not expanded twice.
     def _compile_node(

@@ -9,6 +9,7 @@ from penman.exceptions import DecodeError
 
 from amr_translator import translate, translate_with_audit, validate_frame
 from amr_translator.frame import canonical_atom_key, finalize_frame
+from amr_translator.templates import expand_macros
 
 
 class TranslationTests(unittest.TestCase):
@@ -31,7 +32,7 @@ class TranslationTests(unittest.TestCase):
                 decoded = json.loads(json.dumps(audit, allow_nan=False))
                 self.assertEqual(decoded["frame"], case["frame"])
 
-    def test_public_output_preserves_text_except_outer_whitespace(self):
+    def test_intermediate_frame_preserves_case_for_rules(self):
         frame = translate("(b / boy)")
         atom = frame["atoms"][0]
         for raw, expected in (
@@ -47,6 +48,10 @@ class TranslationTests(unittest.TestCase):
                     "atoms": [{
                         "id": atom["id"],
                         "canonical_key": canonical_atom_key(atom["expression"]),
+                        "canonical_payload": {
+                            key: deepcopy(value) for key, value in atom["expression"].items()
+                            if key != "type"
+                        },
                         "base_surface_text": raw,
                     }],
                 }
@@ -55,6 +60,23 @@ class TranslationTests(unittest.TestCase):
                 self.assertEqual(result["atoms"][0]["expression"], atom["expression"])
                 self.assertEqual(result["formula_ast"], frame["formula_ast"])
                 self.assertEqual(internal["atoms"][0]["base_surface_text"], raw)
+
+    def test_public_verbalizations_are_ready_for_exact_matching(self):
+        for name, expected in (("Ada", "ada"), ("Straße", "strasse"),
+                               ("U.S.", "u.s."), ("Ada  Lee", "ada lee")):
+            for template, suffix in (
+                ('(p / person :name (n / name :op1 "{}"))', ' exists'),
+                ('(g / good-02 :ARG1 (p / person :name (n / name :op1 "{}")) '
+                 ':degree (v / very))', ' is very good'),
+            ):
+                with self.subTest(name=name, template=template):
+                    raw = template.format(name)
+                    audit = translate_with_audit(raw)
+                    self.assertEqual(translate(raw), audit['frame'])
+                    self.assertEqual(audit['frame']['atoms'][0]['verbalization'], expected + suffix)
+                    for merge in audit['merges']:
+                        atom = next(a for a in audit['frame']['atoms'] if a['id'] == merge['atom_id'])
+                        self.assertEqual(merge['surface'], atom['verbalization'])
 
     def test_merges_consume_two_dyads_over_three_nodes_once(self):
         merge_count = 0
@@ -77,6 +99,50 @@ class TranslationTests(unittest.TestCase):
                     for atom in audit["frame"]["atoms"]
                 ))
         self.assertGreater(merge_count, 0)
+
+    def test_finalized_frame_does_not_share_mutable_input(self):
+        frame = translate('(b / boy :name (n / name :op1 "Ada"))')
+        atom = frame["atoms"][0]
+        internal = {
+            "formula_ast": {"op": "and", "args": [
+                {"op": "true"}, deepcopy(frame["formula_ast"]),
+            ]},
+            "atoms": [{
+                "id": atom["id"],
+                "canonical_key": canonical_atom_key(atom["expression"]),
+                "canonical_payload": {
+                    key: deepcopy(value) for key, value in atom["expression"].items()
+                    if key != "type"
+                },
+                "base_surface_text": atom["verbalization"],
+            }],
+        }
+        unused = deepcopy(internal["atoms"][0])
+        unused["id"] = "unused"
+        internal["atoms"].append(unused)
+        before = deepcopy(internal)
+        first = finalize_frame(internal)
+        second = finalize_frame(internal)
+        self.assertEqual(first, frame)
+        first["atoms"][0]["expression"]["node"]["metadata"].append(
+            {"role": "changed", "value": "changed"}
+        )
+        first["formula_ast"]["id"] = "changed"
+        self.assertEqual(internal, before)
+        self.assertEqual(second, frame)
+
+    def test_merge_macro_expansion_preserves_surrounding_negation(self):
+        audit = translate_with_audit('(g / good-02 :ARG1 (b / boy) :degree (v / very))')
+        self.assertEqual(len(audit["merges"]), 1)
+        formula = {"op": "not", "arg": deepcopy(audit["frame"]["formula_ast"])}
+        before = deepcopy(formula)
+        expanded = expand_macros(formula, audit["merges"])
+        self.assertEqual(expanded, {
+            "op": "not", "arg": audit["merges"][0]["definition"],
+        })
+        expanded["arg"]["args"][0]["id"] = "changed"
+        self.assertEqual(formula, before)
+        self.assertNotEqual(audit["merges"][0]["definition"]["args"][0]["id"], "changed")
 
     def test_requires_nonempty_amr_string(self):
         for value in (None, 3, b"(b / boy)", {}, [], "", " \n\t"):

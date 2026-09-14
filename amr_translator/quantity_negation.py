@@ -4,11 +4,11 @@ from copy import deepcopy
 import re
 
 from . import primitives
+from .primitives import _NUMBER_RE
 
 F = primitives
 QUANTIFIERS = frozenset("many much more less few little several lot enough all both far".split())
 COMPARATORS = frozenset(("more-than", "less-than", "at-least", "at-most"))
-NUMBER = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
 # Only direct extensional assertions. An event-valued object of say/cause/want
 # must not turn a negative quantity inside its content into NOT(the relation).
 ASSERTIONS = frozenset((
@@ -114,7 +114,7 @@ def plan_quantity_negations(builder, internal, frame):
             positive = builder._raw_node_surface(node)
         elif (concept in COMPARATORS and len(operands) == 1
               and operands[0]["role"].lower() == ":op1"
-              and NUMBER.fullmatch(F._literal_text(operands[0]["target"]))):
+              and _NUMBER_RE.fullmatch(F._literal_text(operands[0]["target"]))):
             positive = concept.replace("-", " ") + " " + F._literal_text(operands[0]["target"])
         else:
             reason = "unsupported_quantity_form"
@@ -127,8 +127,6 @@ def plan_quantity_negations(builder, internal, frame):
             row.update(atom_id=key, governor=governor, positive_quantity=positive)
             if locations.get(key) is None or len(locations[key]) != 1 or any(x != "and" for x in locations[key][0]):
                 reason = "existing_or_nested_formula_scope"
-            elif sum(owner in node_sets[k] for k in atoms) != 1:
-                reason = "shared_quantified_owner"
             elif any(other is not candidate and other["owner"] in node_sets[key] for other in candidates):
                 reason = "multiple_negative_quantities"
             elif sum(r["role"].lower() == ":quant"
@@ -167,8 +165,8 @@ def apply_quantity_negations(builder, internal, accepted, rejected):
     ids = {row["atom_id"] for row in accepted}
     def visit(node):
         if node["op"] == "atom" and node["id"] in ids:
-            return F._not_ast(deepcopy(node))
-        result = deepcopy(node)
+            return F._not_ast(node)
+        result = dict(node)
         if node["op"] in ("and", "or"):
             result["args"] = [visit(c) for c in node["args"]]
         elif node["op"] == "not":
@@ -177,7 +175,7 @@ def apply_quantity_negations(builder, internal, accepted, rejected):
             result["antecedent"] = visit(node["antecedent"])
             result["consequent"] = visit(node["consequent"])
         return result
-    internal["formula_ast"] = visit(internal["formula_ast"])
+    internal["formula_ast"] = visit(deepcopy(internal["formula_ast"]))
     for row in accepted:
         builder.events.add(("quantity_metadata_negation", row["node"]))
         builder.warnings.discard(("unsupported_nested_quantity", row["node"]))

@@ -37,10 +37,7 @@ frame = translate(raw_amr)
 audit = translate_with_audit(raw_amr)
 ```
 
-`raw_amr` is a non-empty string in PENMAN notation. The translator decodes it
-with `penman` and its AMR model. Its public input is the AMR string itself;
-parser status records and original sentence text are not arguments to these
-functions. There is no sentence-text lookup during translation.
+`raw_amr` must be a non-empty PENMAN string, decoded with `penman`'s AMR model.
 
 Both functions execute the same translation path. `translate` returns its
 `frame`; `translate_with_audit` also returns the diagnostic records described
@@ -244,10 +241,9 @@ $$
 T_{r_a,r_b}(\delta(u),\delta(p),\delta(v)).
 $$
 
-The middle term is the shared source occurrence. This stage does not require
-all three terms to be distinct, and its implementation does not impose a
-predicate-sense regex on the nonconnective source. Those restrictions must not
-be inferred from the word “event.”
+The middle term is the shared source occurrence. The shared source may be any
+nonconnective node; it need not carry a predicate-sense suffix, and the three
+terms may overlap.
 
 An `ARG0`/`ARG1`/`ARG2` event produces the pairs `ARG0+ARG1` and
 `ARG0+ARG2`; it does not also form `ARG1+ARG2`. Here the anchor record can
@@ -305,9 +301,8 @@ A node already represented as an owner or relation term generally needs no
 extra unary. Negative participants and empty disjunction operands receive
 the narrower carrier handling described under Boolean scope and polarity.
 
-Unary surfaces use `C occurs` for a predicate-sense concept, `C exist` for a
-quantity-bearing concept whose quantity is not `1`, and `C exists` otherwise.
-For example, `(r / rain-01)` emits `rain occurs`.
+For example, `(r / rain-01)` emits `rain occurs`; the unary rendering rules
+are listed under [Dyad templates](#dyad-templates).
 
 A semantic relation whose **source** is a structural connective becomes an
 opaque atom retaining that source's connective identity. Its relation is not
@@ -359,10 +354,10 @@ Source: [graph.py](../amr_translator/graph.py),
 ### Graph-defined traversal
 
 The translator rebuilds PENMAN traversal ownership from the decoded graph.
-Initial node colors depend on concept, top-node status, and sorted attributes;
-they are refined using incoming and outgoing role/color neighborhoods. A
-ranked path search then prefers entrances that respect explicit statement and
-scope boundaries.
+Each node receives a structural label, called its color, based on its concept,
+top-node status, and sorted attributes. Colors are refined using incoming and
+outgoing role/color neighborhoods. A ranked path search then prefers entrances
+that respect explicit statement and scope boundaries.
 
 Path costs are compared lexicographically by scope/reference penalties,
 actor-reference penalties, inverse steps, path length, and a role/node
@@ -785,7 +780,6 @@ early may have no `atom_id`, `governor`, or `positive_quantity` field.
 | `unsupported_quantity_form` | Its concept or remaining literal attributes do not match an accepted quantifier/comparator form. |
 | `not_single_complete_atom` | The quantified owner is associated with zero or multiple active atoms. |
 | `existing_or_nested_formula_scope` | The atom is absent, occurs more than once, or appears under an operator other than `and`. |
-| `shared_quantified_owner` | A repeated owner-membership check finds that the owner is not represented by exactly one atom. This follows the earlier single-atom check. |
 | `multiple_negative_quantities` | Another negative-quantity candidate has an owner represented in the same atom. |
 | `multiple_quantifier_scopes` | The represented nodes do not contain exactly one `:quant` metadata record. |
 | `negative_quantified_owner` | The quantified owner also has explicit negative polarity. |
@@ -871,8 +865,7 @@ reported proposition's truth or the embedded quantity's negative meaning.
 The translator detects selected attitude, modal, reporting, and property-content
 boundaries to restrict atom merging and report semantic limitations. A detected
 boundary does not create an intensional logic operator or an encapsulated content
-atom. In the current pipeline, a returned atom with an `expression.scope_type`
-would be rejected as an internal contract error.
+atom.
 
 ### Detected boundary families
 
@@ -902,9 +895,7 @@ registry. A property boundary only extends merge guards; it does not add support
 to the content traversal or provide a separate property-scope compiler.
 
 Each limitation records `governor`, `concept`, `content`, `edge`, and `status`.
-The detectors use the listed concepts and structures, rather than recognizing all
-possible nonfactual language. A missing limitation is not evidence that an
-unregistered attitude or report has received a complete semantic treatment.
+Detection is limited to the listed concepts and graph patterns.
 
 ### What the guards do
 
@@ -927,7 +918,7 @@ possible metadata rejection reasons are:
 | --- | --- |
 | `mode_deferred` | An inspected node has a `:mode` attribute or edge. |
 | `unsupported_polarity_deferred` | Polarity is not exactly one literal-minus attribute. |
-| `nested_polarity_deferred` | A literal-minus polarity occurs on a node not explicitly allowed by that template. |
+| `nested_polarity_deferred` | An inspected node has a literal-minus polarity. |
 
 These checks preserve the unresolved relation atoms when a proposed merge is
 refused. They do not repair the broader factivity or reporting semantics. In
@@ -996,9 +987,11 @@ is detected for merge isolation but is not enclosed in a nonfactual scope.
 
 ## Lexical rendering
 
-The verbalizer reads AMR concepts, role labels, literals, names, and metadata. Each public atom contains an unsigned `verbalization`; formula negation does not insert `not` into that string. The public output removes leading and trailing whitespace from each verbalization, preserving case, internal whitespace, and existing punctuation without adding a final period. Ordinary templates use single spaces. Predicates generally remain in their base form, as in `Ada give book`.
+The verbalizer reads AMR concepts, role labels, literals, names, and metadata. Each public atom contains an unsigned `verbalization`; formula negation does not insert `not` into that string. After all rules and template merges, the public output applies `str(value).strip().casefold()` to each verbalization. Exact matching compares the resulting strings directly. Internal whitespace and existing punctuation are preserved without adding a final period. Ordinary templates use single spaces. Predicates generally remain in their base form, as in `ada give book`.
 
-Source: [concept and literal rendering](../amr_translator/primitives.py#L26), [endpoint rendering](../amr_translator/atoms.py#L695), [role templates](../amr_translator/role_templates.py#L567), [final role dispatch](../amr_translator/verbalization.py#L221), [surface repairs](../amr_translator/surfaces.py#L84), and [public frame projection](../amr_translator/frame.py#L91).
+The same formatting applies to `merges[*].surface` in the audit. Structured atom identities and `diagnostic_provenance` retain their construction values.
+
+Source: [concept and literal rendering](../amr_translator/primitives.py), [endpoint rendering](../amr_translator/atoms.py), [role templates](../amr_translator/role_templates.py), [final role dispatch](../amr_translator/verbalization.py), [surface repairs](../amr_translator/surfaces.py), and [public frame projection](../amr_translator/frame.py).
 
 ### Concepts, literals, names, and metadata
 
@@ -1026,7 +1019,7 @@ The records are retained; the warning does not resolve their ambiguity.
 
 ### Quantity rendering
 
-Source: [pluralization](../amr_translator/metadata.py#L34), [numeric operand rendering](../amr_translator/builder.py#L414), [metadata value rendering](../amr_translator/builder.py#L479), and [quantity-aware endpoint rendering](../amr_translator/builder.py#L491).
+Source: [pluralization](../amr_translator/metadata.py), [numeric operand rendering](../amr_translator/builder.py), [metadata value rendering](../amr_translator/builder.py), and [quantity-aware endpoint rendering](../amr_translator/builder.py).
 
 For a plain quantified noun, the first quantity precedes the noun: `1 box`, `2 boxes`. A quantity string other than exactly `1` triggers simple pluralization. A `*-quantity` concept uses its quantity and unit; without an explicit unit it uses the concept's quantity-kind word. For example, a distance quantity can display as `2 meters`.
 
@@ -1059,7 +1052,7 @@ measured nominal as `MEASUREMENT of NOUN` records `measured_nominal_surface`.
 
 ### PropBank role resolution
 
-Source: [numbered-role lookup](../amr_translator/propbank.py#L134) and [semantic-relation resolution](../amr_translator/role_templates.py#L368).
+Source: [numbered-role lookup](../amr_translator/propbank.py) and [semantic-relation resolution](../amr_translator/role_templates.py).
 
 Numbered-role lookup accepts `ARG` followed by digits and a concept ending in a two- or three-digit sense suffix. Lookup is case-insensitive. For `lemma-NN`, it first tries `lemma.NN`, then the spelling with hyphens in the lemma changed to underscores. It selects the first candidate roleset that exists. It does not search other senses, back off to another sense, or infer a missing role from the argument number.
 
@@ -1089,7 +1082,7 @@ Only `exact` supplies a semantic relation. Function tags determine the broad rel
 | `COM` | `opponent` for `opponent`, `against`, `adversary`, `competitor`, `fighting`, `fighter`, `wrestler`, `arguer`; else `companion`. |
 | `PRD` | `patient` for `ARG1`; otherwise `result`. |
 | `EXT` | `extent`. |
-| `PRP` | The `for` template; the final audit relation is `purpose`. |
+| `PRP` | The `purpose` relation, rendered with `for`. |
 | `TMP` | `time`. |
 | `VSP` or any other tag | `unresolved`. |
 
@@ -1136,9 +1129,9 @@ These lexical sets apply only at the specified decision points; they do not make
 
 ### Dyad templates
 
-Source: [numbered-role templates](../amr_translator/role_templates.py#L567), [non-numbered templates](../amr_translator/role_templates.py#L185), and [non-numbered dispatch](../amr_translator/role_templates.py#L628).
+Source: [numbered-role templates](../amr_translator/role_templates.py), [non-numbered templates](../amr_translator/role_templates.py), and [non-numbered dispatch](../amr_translator/role_templates.py).
 
-Let `C` be the source/predicate surface and `D` the target surface. For a numbered role, first resolve its relation as above, then apply:
+Let `C` be the source/predicate surface and `D` the target surface. `pp(C)` is the past-participle form defined under [Inflection and local surface repairs](#inflection-and-local-surface-repairs). For a numbered role, first resolve its relation as above, then apply:
 
 | Relation | Surface |
 | --- | --- |
@@ -1200,11 +1193,11 @@ For non-numbered roles, the complete fixed table is:
 
 If no explicit table entry exists, `prep-TEXT` renders as `C TEXT D`, changing hyphens in `TEXT` to spaces. An `op` followed by digits renders as `C D` when it reaches this lexical stage. Other roles retain their ordered base fallback. This table does not cause metadata or connective edges to emit propositions; atom construction determines which roles reach the verbalizer. PENMAN canonicalization may also change an inverse role to its forward orientation before this stage.
 
-An eligible reference-mode projection takes precedence over the ordinary dyad table and renders `C has D mode`. A unary carrier renders `C occurs` for a sense-tagged concept; otherwise it renders `C exist` when a quantity is present and differs from the string `1`, and `C exists` otherwise. Unary rendering is preserved instead of being reduced to the concept word alone. An opaque atom uses the dyad renderer for its retained role.
+A lexical-node `:mode` dyad takes precedence over the ordinary dyad table and renders `C has D mode`. A unary carrier renders `C occurs` for a sense-tagged concept; otherwise it renders `C exist` when a quantity is present and differs from the string `1`, and `C exists` otherwise. Unary rendering is preserved instead of being reduced to the concept word alone. An opaque atom uses the dyad renderer for its retained role.
 
 ### Triple templates and precedence
 
-Source: [triple role templates](../amr_translator/role_templates.py#L690), [triple rendering](../amr_translator/role_templates.py#L717), and [final precedence and fallback guards](../amr_translator/verbalization.py#L221).
+Source: [triple role templates](../amr_translator/role_templates.py), [triple rendering](../amr_translator/role_templates.py), and [final precedence and fallback guards](../amr_translator/verbalization.py).
 
 These rules render base same-event triples; ordinary merged triples use the
 [merge templates](#registered-atom-merges). Let `S`, `P`, `O` denote the selected
@@ -1254,7 +1247,7 @@ a triple that base atom construction has already accepted.
 
 ### Inflection and local surface repairs
 
-Source: [participle inflection](../amr_translator/role_templates.py#L258), [lexical helpers](../amr_translator/surfaces.py#L27), and [repair application](../amr_translator/surfaces.py#L144).
+Source: [participle inflection](../amr_translator/role_templates.py), [lexical helpers](../amr_translator/surfaces.py), and [repair application](../amr_translator/surfaces.py).
 
 The past-participle function `pp` lowercases a predicate phrase and inflects its first word, retaining the remaining words. After checking the irregular dictionary below, it adds `d` to an `e` ending, changes consonant-plus-`y` to `ied`, doubles the final consonant for its explicit doubling set, and otherwise adds `ed`.
 
@@ -1292,7 +1285,6 @@ The following surface repairs operate after role templates without changing the 
 | Adjectival state | An `ARG1` dyad from one of the exact state concepts below to a concept node renders `TARGET COPULA ADJECTIVE`. |
 | General copular agreement | For `ARG1` or `domain`, if the existing surface starts exactly with `TARGET is ` and the target is not canonical `and`, `or`, or `multi sentence`, replace `is` with the applicable copula. |
 | Compound modifier | A leaf `swim-01` modifying a `pool` through `:mod`, with no outgoing edges or attributes of its own, displays as `swimming` when the registered modifier merge renders it. Its concept identity remains `swim-01`. |
-| Purpose metadata | A resolved `PRP` role is labeled `purpose` in the final metadata and template identifier. Its already selected `for` surface is unchanged. |
 
 The exact adjectival-state map is:
 
@@ -1323,7 +1315,7 @@ The package includes a compact PropBank numbered-role index, its provenance READ
 | Index SHA-256 | `59f3e380bbead1e75e60bfedfb868c941e53d8e2c63b7ce3341342a8ec47dc7d` |
 | Resource license | CC BY-SA 4.0 |
 
-The supplement contributes 99 rolesets and overrides the earlier `have-degree.92` entry. The bundled XML preserves its original bytes; the index construction documented in the resource README removed one unmatched `</example>` tag under an exact source-hash check. Runtime translation uses the already bundled index, not an XML repair step.
+The supplement contributes 99 rolesets and overrides the earlier `have-degree.92` entry. Index construction is documented in the [resource README](../amr_translator/resources/propbank/README.md).
 
 The loader checks the index hash, schema, provenance fields, counts, and roleset-map size. `verify_resources()` additionally checks all four resource files against pinned hashes. Missing or changed resources raise `PropBankRoleIndexError`. A valid resource with an absent or ambiguous lexical entry instead produces the ordinary lookup status and surface fallback described above. Resource checks are cached within the process.
 
@@ -1331,13 +1323,13 @@ Source and full provenance: [propbank.py](../amr_translator/propbank.py), [resou
 
 ### Identity and text helpers
 
-Source: [text helpers](../amr_translator/frame.py#L38) and [canonical key serialization](../amr_translator/frame.py#L64).
+Source: [text helpers](../amr_translator/frame.py) and [canonical key serialization](../amr_translator/frame.py).
 
-These helpers serve different operations; none changes the translated frame in place.
+Both translation entry points apply `normalize_exact_match_surface` to public verbalizations after template merging. The helpers below return strings without modifying their arguments. `translate` does not apply `format_nli_prompt_surface`; a period is appended only when that helper is called.
 
 | Helper | Exact behavior |
 | --- | --- |
-| `canonical_atom_key(expression)` | Returns `TYPE:JSON`, with the expression type as a prefix and the remaining fields serialized using sorted keys and compact separators. It validates the type/kind pairing and does not derive identity from verbalization text. |
+| `canonical_atom_key(expression)` | Serializes the structured identity as `TYPE:JSON`; see [Atom expressions and keys](#atom-expressions-and-keys). |
 | `normalize_exact_match_surface(value)` | Returns `str(value).strip().casefold()`. It trims outer whitespace and performs Unicode case folding. It does not collapse internal whitespace or remove punctuation. |
 | `format_nli_prompt_surface(value)` | Returns `str(value).strip()` followed by one additional literal period. It preserves case and internal whitespace. It does not check existing punctuation: `"Text."` becomes `"Text.."`. |
 
@@ -1350,7 +1342,7 @@ format_nli_prompt_surface("Ada read book.")        # "Ada read book.."
 
 ### Checked lexical examples
 
-The following are actual `translate` outputs; the displayed formula comes from `formula_ast_to_string`. Atom identifiers may have gaps after a merge replaces earlier atoms.
+Examples show `translate` outputs, with formulas rendered by `formula_ast_to_string`.
 
 **Numbered roles and a name**
 
@@ -1363,8 +1355,8 @@ The following are actual `translate` outputs; the displayed formula comes from `
 
 ```text
 formula: (x1 & x2)
-x1: Ada give book
-x2: Ada give to student
+x1: ada give book
+x2: ada give to student
 ```
 
 **Possessive pronoun and adjectival state**
@@ -1390,8 +1382,8 @@ x3: my car is red
 
 ```text
 formula: (x1 & x2)
-x1: Ada drink 1 cup of coffee
-x2: Ada drink during 2026-09-13
+x1: ada drink 1 cup of coffee
+x2: ada drink during 2026-09-13
 ```
 
 **Restricted adjective rule and plural agreement**
@@ -1447,7 +1439,7 @@ A graph match is eligible only when its two relations still have separate active
 dyadic atoms after initial atom construction. Relations already absorbed by a
 same-event triple are unavailable. Literal attributes, unary atoms, triples,
 opaque atoms, coordination projections, participant-polarity projections, and
-reference-mode projections are not ordinary merge components.
+lexical-node `:mode` dyads are not ordinary merge components.
 
 All candidates must satisfy these requirements:
 
@@ -1476,9 +1468,9 @@ All candidates must satisfy these requirements:
 
 Candidates are ordered by priority, canonical center descriptor and structural
 color, rule ID, and the roles and endpoint descriptors/colors of their component
-edges. Structural colors are obtained by refining node signatures with their
-incoming and outgoing neighborhoods. This avoids choosing a merge simply from
-the written order of AMR relations.
+edges. This merge pass computes its own colors by refining node signatures with
+incoming and outgoing neighborhoods. The order is derived from graph structure
+rather than the written order of AMR relations.
 
 Selection is greedy: once an atom is consumed, later candidates using it receive
 `overlapping_candidate`. Each accepted merge consumes exactly two original atoms
@@ -1669,7 +1661,7 @@ merge. `brand` is handled only by `local_brand_new`.
 Each pair is `modifier/head`.
 
 **Property concepts (`PROPERTIES`).** This is the following set plus every key
-in `ADJECTIVE_STATES` listed immediately afterward:
+in `ADJECTIVE_STATES` defined under [Inflection and local surface repairs](#inflection-and-local-surface-repairs):
 
 ```text
 good-02 good bad-07 bad popular-02 popular lax happy-01 happy sad-02 sad
@@ -1678,19 +1670,8 @@ quiet bright dark difficult easy expensive cheap important strong weak high
 low close wide deep lax-01 nice-01 high-02 strong-02 beautiful-02 rough-04 muddy-01
 ```
 
-**Adjective states (`ADJECTIVE_STATES`).** The mappings in
-[`surfaces.py`](../amr_translator/surfaces.py) are:
-
-```text
-important-01 -> important    easy-05 -> easy       hard-02 -> hard
-long-03 -> long              fast-02 -> fast       funny-02 -> funny
-well-09 -> well              black-04 -> black     white-03 -> white
-red-02 -> red                green-02 -> green     yellow-02 -> yellow
-blue-02 -> blue              brown-01 -> brown     pink-04 -> pink
-gray-02 -> gray              small-02 -> small     large-02 -> large
-young-01 -> young            old-02 -> old         quick-02 -> quick
-intense-02 -> intense        wet-01 -> wet
-```
+**Adjective states (`ADJECTIVE_STATES`).** These are the mappings listed under
+[Inflection and local surface repairs](#inflection-and-local-surface-repairs).
 
 **Physical properties (`PHYSICAL_PROPERTY_SURFACES`).** The mapped concepts are
 `black-04 white-03 red-02 green-02 yellow-02 blue-02 brown-01 pink-04 gray-02 small-02 large-02 young-01 old-02`
@@ -1776,10 +1757,8 @@ detectors and their limits.
 
 ### Executed merge examples
 
-The outputs below were produced by `translate_with_audit` and
-`formula_ast_to_string` from the current package. All AMRs are self-contained
-synthetic examples; no sentence parser or neural model is used. Atom IDs are
-shown as emitted, including gaps after consumed atoms are removed.
+The following synthetic AMRs illustrate accepted and rejected merges; outputs
+include the corresponding audit records.
 
 #### Degree property
 

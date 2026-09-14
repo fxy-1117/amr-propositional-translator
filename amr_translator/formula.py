@@ -7,27 +7,6 @@ import copy
 from .primitives import AMRTripleValidationError
 
 
-def _formula_constant_count(node: Mapping[str, Any]) -> int:
-    op = str(node.get("op", ""))
-    if op in {"true", "false"}:
-        return 1
-    if op == "atom":
-        return 0
-    if op == "not":
-        return _formula_constant_count(node.get("arg", {}))
-    if op in {"and", "or"}:
-        return sum(
-            _formula_constant_count(arg)
-            for arg in node.get("args", [])
-        )
-    if op == "implies":
-        return _formula_constant_count(
-            node.get("antecedent", {})
-        ) + _formula_constant_count(node.get("consequent", {}))
-    raise AMRTripleValidationError(
-        "hard-formula parent formula has unsupported operator {!r}".format(op)
-    )
-
 def _normalize_solver_constants(
     node: Mapping[str, Any]
 ) -> Dict[str, Any]:

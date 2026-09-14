@@ -11,6 +11,7 @@ from penman.layout import Push
 
 from . import boundaries, metadata as metadata_rules
 from . import primitives as F
+from .primitives import _NUMBER_RE
 from .atoms import FlatTripleBuilder
 from .frame import TranslatorContractError
 from .graph import graph_owned_layout, scope_reference_view
@@ -23,9 +24,7 @@ NONFACTIVE_CONTENT = {
     "hope-01": ":arg1", "fear-01": ":arg1", "wish-01": ":arg1",
     "intend-01": ":arg1", "pretend-01": ":arg1", "plan-01": ":arg1",
 }
-# Detection for optional positive modal encapsulation is separate from the
-# existing attitude list used by Boolean-branch compilation. Extending scope
-# coverage must not silently change that traversal or its negation behavior.
+# Modal boundaries are detected separately from attitude-governed branches.
 MODAL_CONTENT = {"possible-01": ":arg1"}
 NUMERIC_UNARY = {
     "more-than": "more than", "less-than": "less than",
@@ -33,7 +32,6 @@ NUMERIC_UNARY = {
     "approximately": "approximately", "about": "about",
     "almost": "almost", "nearly": "nearly",
 }
-NUMBER = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
 MAGNITUDE_SCALES = frozenset(("hundred", "thousand", "million", "billion", "trillion"))
 MEASURE_RELATIONS = frozenset("after before ago away apart ahead behind above below under over beyond along around near outside inside across".split())
 
@@ -62,11 +60,11 @@ def nonfactive_boundaries(builder):
 
 
 def property_merge_boundaries(builder, existing):
-    """Detect alternate property clauses for merge guards, not encapsulation.
+    """Detect alternate property clauses for atom-merge guards.
 
     AMR may express a property as bare red :domain car instead of red-02
-    :ARG1 car. Keep such content separate from outside assertions without
-    adding it to the supported one-level scope compiler or builder traversal.
+    :ARG1 car. These boundaries keep that content separate from outside
+    assertions during atom merging.
     """
     from .reporting import REPORTING
     from .templates import PROPERTIES, PHYSICAL_PROPERTY_SURFACES
@@ -95,13 +93,12 @@ def property_merge_boundaries(builder, existing):
 class GraphOwnedBuilder(FlatTripleBuilder):
     """Build atoms and formulas using graph-defined scope ownership."""
 
-    def __init__(self, graph, *, repairs=True, quantity_surface_nodes=()):
-        graph = graph_owned_layout(graph) if repairs else graph
+    def __init__(self, graph, *, quantity_surface_nodes=()):
+        graph = graph_owned_layout(graph)
         self._stable_colors = None
         self._graph_context_cache = {}
         self._semantic_branch_regions = {}
         self._explicit_branch_regions = {}
-        self.repairs = bool(repairs)
         self.quantity_surface_nodes = frozenset(quantity_surface_nodes)
         self.events = set()
         self.warnings = set()
@@ -114,45 +111,43 @@ class GraphOwnedBuilder(FlatTripleBuilder):
                     self.tree_parents[item.variable] = edge.target if item.variable == edge.source else edge.source
         self._formula_stage = False
         super().__init__(graph)
-        if self.repairs:
-            for node in self.concepts:
-                values = defaultdict(set)
-                for row in self.outgoing[node] + self.attrs_by_source[node]:
-                    if row['role'] in (':quant', ':unit', ':scale', ':value', ':polarity'):
-                        values[row['role']].add(row['target'])
-                if any(len(v) > 1 for v in values.values()):
-                    self.warnings.add(('ambiguous_repeated_metadata_preserved', node))
+        for node in self.concepts:
+            values = defaultdict(set)
+            for row in self.outgoing[node] + self.attrs_by_source[node]:
+                if row['role'] in (':quant', ':unit', ':scale', ':value', ':polarity'):
+                    values[row['role']].add(row['target'])
+            if any(len(v) > 1 for v in values.values()):
+                self.warnings.add(('ambiguous_repeated_metadata_preserved', node))
         for edge in self.edges:
-            if (self.repairs and edge['role'] == ':part' and
+            if (edge['role'] == ':part' and
                     not EVENT.fullmatch(self.concepts[edge['source']]) and
                     not EVENT.fullmatch(self.concepts[edge['target']])):
                 pair = (edge['source'], edge['id'])
                 if pair not in self.inverse_tree_children[edge['target']]:
                     self.inverse_tree_children[edge['target']].append(pair)
         self._shared_or_properties = {}
-        if self.repairs:
-            for root in self.concepts:
-                if self.concepts[root] != 'or':
+        for root in self.concepts:
+            if self.concepts[root] != 'or':
+                continue
+            targets = {e['target'] for e in self._connective_op_edges(root)}
+            if len(targets) < 2:
+                continue
+            properties = {}
+            for prop in {e['source'] for t in targets for e in self.incoming[t]}:
+                edges = self.outgoing[prop]
+                roles = {e['role'] for e in edges}
+                if (self.concepts[prop] in SCOPES or self.incoming[prop]
+                        or roles not in ({':ARG1'},{':ARG2'})
+                        or {e['target'] for e in edges} != targets or len(edges) != len(targets)
+                        or any(a['role'] not in (':polarity',':wiki') for a in self.attrs_by_source[prop])):
                     continue
-                targets = {e['target'] for e in self._connective_op_edges(root)}
-                if len(targets) < 2:
-                    continue
-                properties = {}
-                for prop in {e['source'] for t in targets for e in self.incoming[t]}:
-                    edges = self.outgoing[prop]
-                    roles = {e['role'] for e in edges}
-                    if (self.concepts[prop] in SCOPES or self.incoming[prop]
-                            or roles not in ({':ARG1'},{':ARG2'})
-                            or {e['target'] for e in edges} != targets or len(edges) != len(targets)
-                            or any(a['role'] not in (':polarity',':wiki') for a in self.attrs_by_source[prop])):
-                        continue
-                    properties[prop] = {e['target']: e['id'] for e in edges}
-                    for edge in edges:
-                        pair = (prop,edge['id'])
-                        if pair not in self.inverse_tree_children[edge['target']]:
-                            self.inverse_tree_children[edge['target']].append(pair)
-                if properties:
-                    self._shared_or_properties[root] = (targets,properties)
+                properties[prop] = {e['target']: e['id'] for e in edges}
+                for edge in edges:
+                    pair = (prop,edge['id'])
+                    if pair not in self.inverse_tree_children[edge['target']]:
+                        self.inverse_tree_children[edge['target']].append(pair)
+            if properties:
+                self._shared_or_properties[root] = (targets,properties)
 
     def _build_formula(self, atoms):
         # Closed operands below compile their own local minus. The inherited
@@ -184,17 +179,16 @@ class GraphOwnedBuilder(FlatTripleBuilder):
         self._formula_stage = True
         original_envelopes = self.multi_sentence_envelope_nodes
         self.multi_sentence_envelope_nodes = set(original_envelopes)
-        if self.repairs:
-            for node in sorted(original_envelopes):
-                if self._concept_canonical(node) not in ("and", "or"):
-                    continue
-                if self._raw_statement_cycle(node):
-                    self.warnings.add(("cyclic_sentence_connective_unrepaired", node))
-                else:
-                    # Formula view only: changing this during atomization can
-                    # change participant projections and their original owners.
-                    self.multi_sentence_envelope_nodes.remove(node)
-                    self.events.add(("sentence_connective_preserved", node))
+        for node in sorted(original_envelopes):
+            if self._concept_canonical(node) not in ("and", "or"):
+                continue
+            if self._raw_statement_cycle(node):
+                self.warnings.add(("cyclic_sentence_connective_unrepaired", node))
+            else:
+                # Formula view only: changing this during atomization can
+                # change participant projections and their original owners.
+                self.multi_sentence_envelope_nodes.remove(node)
+                self.events.add(("sentence_connective_preserved", node))
         try:
             return super()._build_formula(atoms)
         finally:
@@ -222,7 +216,7 @@ class GraphOwnedBuilder(FlatTripleBuilder):
         # Boolean operator is identified by its raw concept, never that text.
         # This is formula-only: group-quantity atomization stays unchanged and
         # is disclosed as unresolved rather than distributing quantifiers.
-        if self.repairs and self._formula_stage and self._concept_canonical(node) in ("and", "or"):
+        if self._formula_stage and self._concept_canonical(node) in ("and", "or"):
             if self.node_canonical(node) not in ("and", "or"):
                 self.events.add(("raw_connective_operator", node))
                 self.warnings.add(("qualified_connective_atomization_unchanged", node))
@@ -232,8 +226,6 @@ class GraphOwnedBuilder(FlatTripleBuilder):
 
     def _mark_structural_records(self):
         super()._mark_structural_records()
-        if not self.repairs:
-            return
         for node, concept in self.concepts.items():
             if concept != "have-condition-91":
                 continue
@@ -296,7 +288,7 @@ class GraphOwnedBuilder(FlatTripleBuilder):
 
     def _compile_condition_target(self, owner_node, edge, owner_atoms, stack):
         target = edge["target"]
-        if self.repairs and target not in stack:
+        if target not in stack:
             # A condition may explicitly refer to a sibling clause. Branch
             # filtering must not erase that referenced antecedent merely
             # because we are currently compiling the other branch. Retain the
@@ -339,77 +331,127 @@ class GraphOwnedBuilder(FlatTripleBuilder):
         start = actual.index(root)
         return actual[start:] == branch_nodes
 
-    def _compile_node_scoped(self, node, owner_atoms, stack):
-        relative = self.negative_relatives.get(node)
-        if relative and relative[0] in stack:
-            # Its signed property is emitted in each declared operand branch.
-            return {"op": "true"}
-        local = list(owner_atoms.get(node, []))
-        if self.repairs and stack:
-            # A shared participant can carry projections from several events.
-            # Re-entering the participant is not an assertion of those events.
-            # Their atoms belong in their governor's declared OP traversal.
-            retained = [a for a in local if not a.get("coordination_root_node")
-                        or self._atom_branch_anchor(a) in (*stack, node)
-                        or self._projection_is_in_declared_branch(a, node, stack)]
-            if len(retained) != len(local):
+    def _compile_node(self, node, owner_atoms, stack):
+        for i, root in enumerate(stack[:-1]):
+            if self.concepts.get(root) != 'or':
+                continue
+            targets = {edge['target'] for edge in self._connective_op_edges(root)}
+            if stack[i + 1] in targets and node in targets - {stack[i + 1]}:
+                if not self._explicit_boolean_operand(node, stack):
+                    return {'op': 'true'}
+                self.events.add(('explicit_boolean_reference_preserved', node))
+        # Select the existing edge-specific atom for a shared property.
+        for i, root in enumerate(stack[:-1]):
+            shared = getattr(self, '_shared_or_properties', {}).get(root)
+            if not shared:
+                continue
+            targets, properties = shared
+            active = stack[i + 1]
+            if active in targets and node in properties:
+                eid = properties[node][active]
                 owner_atoms = dict(owner_atoms)
-                owner_atoms[node] = local = retained
-                self.events.add(("shared_participant_projection_isolation", node))
-        anchors = {self._atom_branch_anchor(a) for a in local}
-        active = next((n for n in reversed(stack) if n in anchors), "")
-        additions = set()
-        negative_ids = set()
-        if self.repairs and active:
-            for atom in local:
-                if not self._projection_is_in_declared_branch(atom, node, stack):
-                    continue
-                root = atom["coordination_root_node"]
-                anchor = self._atom_branch_anchor(atom)
-                if self.negative_relatives.get(anchor) == (root, active):
-                    additions.add(anchor)
-                    negative_ids.add(atom["id"])
-                    self.events.add(("negative_relative_branch_binding", root))
-                attached = {n for n, _eid in self.inverse_tree_children.get(root, [])}
-                # Only a positive relative predicate introduced directly on the
-                # coordination is shared with its active outer event. Another
-                # event merely referring to the same participants is NOT shared:
-                # e.g. NOT(trim(plants OR shrubs)) AND overgrow(plants OR shrubs).
-                if (anchor in attached and anchor not in (active, node)
-                        and not self._raw_has_negative_polarity(anchor)
-                        and not self._condition_edges(anchor)
-                        and all(e["id"] in {eid for _n, eid in self.inverse_tree_children.get(anchor, [])}
-                                for e in self.incoming.get(anchor, []))
-                        and self.concepts.get(anchor) not in NONFACTIVE_CONTENT):
-                    additions.add(anchor)
-            if additions:
-                replacements = []
+                owner_atoms[node] = [atom for atom in owner_atoms.get(node, [])
+                                     if eid in atom.get('source_graph_record_ids', [])]
+        original_inverse = self.inverse_tree_children.get(node, [])
+        retained = [(child, eid) for child, eid in original_inverse
+                    if not self._inverse_statement_conflict(child, (*stack, node))]
+        if retained != original_inverse:
+            self.events.add(("shared_entity_inverse_scope_isolation", node))
+            self.inverse_tree_children[node] = retained
+        try:
+            relative = self.negative_relatives.get(node)
+            if relative and relative[0] in stack:
+                # Its signed property is emitted in each declared operand branch.
+                return {"op": "true"}
+            local = list(owner_atoms.get(node, []))
+            if stack:
+                # A shared participant can carry projections from several events.
+                # Re-entering the participant is not an assertion of those events.
+                # Their atoms belong in their governor's declared OP traversal.
+                retained = [a for a in local if not a.get("coordination_root_node")
+                            or self._atom_branch_anchor(a) in (*stack, node)
+                            or self._projection_is_in_declared_branch(a, node, stack)]
+                if len(retained) != len(local):
+                    owner_atoms = dict(owner_atoms)
+                    owner_atoms[node] = local = retained
+                    self.events.add(("shared_participant_projection_isolation", node))
+            anchors = {self._atom_branch_anchor(a) for a in local}
+            active = next((n for n in reversed(stack) if n in anchors), "")
+            additions = set()
+            negative_ids = set()
+            if active:
                 for atom in local:
+                    if not self._projection_is_in_declared_branch(atom, node, stack):
+                        continue
+                    root = atom["coordination_root_node"]
                     anchor = self._atom_branch_anchor(atom)
-                    if anchor in additions or anchor in (active, node):
-                        # Formula view only; the emitted provenance is unchanged.
-                        atom = dict(atom)
-                        atom["event_occurrence_id"] = node
-                        replacements.append(atom)
-                owner_atoms = dict(owner_atoms)
-                owner_atoms[node] = replacements
-                self.events.add(("projected_branch_binding", node))
-        result = super()._compile_node(node, owner_atoms, stack)
-        if negative_ids:
-            def signed(n):
-                if n["op"] == "atom" and n["id"] in negative_ids:
-                    return F._not_ast(n)
-                n = deepcopy(n)
-                if n["op"] in ("and", "or"):
-                    n["args"] = [signed(c) for c in n["args"]]
-                elif n["op"] == "not":
-                    n["arg"] = signed(n["arg"])
-                elif n["op"] == "implies":
-                    n["antecedent"] = signed(n["antecedent"])
-                    n["consequent"] = signed(n["consequent"])
-                return n
-            result = signed(result)
-        return result
+                    if self.negative_relatives.get(anchor) == (root, active):
+                        additions.add(anchor)
+                        negative_ids.add(atom["id"])
+                        self.events.add(("negative_relative_branch_binding", root))
+                    attached = {n for n, _eid in self.inverse_tree_children.get(root, [])}
+                    # Only a positive relative predicate introduced directly on the
+                    # coordination is shared with its active outer event. Another
+                    # event merely referring to the same participants is NOT shared:
+                    # e.g. NOT(trim(plants OR shrubs)) AND overgrow(plants OR shrubs).
+                    if (anchor in attached and anchor not in (active, node)
+                            and not self._raw_has_negative_polarity(anchor)
+                            and not self._condition_edges(anchor)
+                            and all(e["id"] in {eid for _n, eid in self.inverse_tree_children.get(anchor, [])}
+                                    for e in self.incoming.get(anchor, []))
+                            and self.concepts.get(anchor) not in NONFACTIVE_CONTENT):
+                        additions.add(anchor)
+                if additions:
+                    replacements = []
+                    for atom in local:
+                        anchor = self._atom_branch_anchor(atom)
+                        if anchor in additions or anchor in (active, node):
+                            # Formula view only; the emitted provenance is unchanged.
+                            atom = dict(atom)
+                            atom["event_occurrence_id"] = node
+                            replacements.append(atom)
+                    owner_atoms = dict(owner_atoms)
+                    owner_atoms[node] = replacements
+                    self.events.add(("projected_branch_binding", node))
+            result = super()._compile_node(node, owner_atoms, stack)
+            if negative_ids:
+                def signed(n):
+                    if n["op"] == "atom" and n["id"] in negative_ids:
+                        return F._not_ast(n)
+                    # Copy each AST node once while rebuilding its children.
+                    n = dict(n)
+                    if n["op"] in ("and", "or"):
+                        n["args"] = [signed(c) for c in n["args"]]
+                    elif n["op"] == "not":
+                        n["arg"] = signed(n["arg"])
+                    elif n["op"] == "implies":
+                        n["antecedent"] = signed(n["antecedent"])
+                        n["consequent"] = signed(n["consequent"])
+                    return n
+                result = signed(result)
+            return result
+        finally:
+            self.inverse_tree_children[node] = original_inverse
+
+    def _compile_node_core(self, node, owner_atoms, stack):
+        if node not in stack and self._formula_stage:
+            result = self._closed_entity_or(node, owner_atoms)
+            if result is not None:
+                return result
+        if node not in self.conditions:
+            return super()._compile_node_core(node, owner_atoms, stack)
+        if node in stack:
+            raise TranslatorContractError("conditional scope cycle")
+        condition, consequence = self.conditions[node]
+        next_stack = (*stack, node)
+        antecedent = self._compile_node(condition, owner_atoms, next_stack)
+        consequent = self._compile_node(consequence, owner_atoms, next_stack)
+        if not F._formula_ids(antecedent) or not F._formula_ids(consequent):
+            raise TranslatorContractError("condition lacks a proposition")
+        conditional = {"op": "implies", "antecedent": antecedent,
+                       "consequent": consequent}
+        return F._combine_ast("and", [conditional] + [F._atom_ast(a["id"])
+                              for a in owner_atoms.get(node, [])])
 
     def _numeric_node_surface(self, node, stack=()):
         if node in stack or len(stack) >= 6:
@@ -430,7 +472,7 @@ class GraphOwnedBuilder(FlatTripleBuilder):
             quant, unit = roles[":quant"], roles[":unit"]
             value = (self._numeric_node_surface(quant["target"], (*stack, node))
                      if quant.get("target_is_node") else F._literal_text(quant["target"]))
-            if not value or (not quant.get("target_is_node") and not NUMBER.fullmatch(value)):
+            if not value or (not quant.get("target_is_node") and not _NUMBER_RE.fullmatch(value)):
                 return None
             if unit.get("target_is_node"):
                 u = unit["target"]
@@ -459,7 +501,7 @@ class GraphOwnedBuilder(FlatTripleBuilder):
                 value = self._numeric_node_surface(record["target"], (*stack, node))
             else:
                 value = F._literal_text(record["target"])
-                if not NUMBER.fullmatch(value):
+                if not _NUMBER_RE.fullmatch(value):
                     value = None
             if value is None:
                 return None
@@ -472,12 +514,12 @@ class GraphOwnedBuilder(FlatTripleBuilder):
             return "from {} to {}".format(by_role[":op1"], by_role[":op2"])
         if concept == "or" and set(by_role) == {":op1", ":op2"}:
             return "{} or {}".format(by_role[":op1"], by_role[":op2"])
-        if NUMBER.fullmatch(concept) and not records:
+        if _NUMBER_RE.fullmatch(concept) and not records:
             return concept
         return None
 
     def _metadata_value_surface(self, record):
-        if self.repairs and record.get("target_is_node"):
+        if record.get("target_is_node"):
             node = str(record["target"])
             if record["role"].casefold() in (":quant", ":value"):
                 value = self._numeric_node_surface(node)
@@ -491,25 +533,24 @@ class GraphOwnedBuilder(FlatTripleBuilder):
     def node_surface(self, node):
         surface = super().node_surface(node)
         concept = self.concepts.get(node, "")
-        if self.repairs:
-            quant_records = [r for r in self.metadata_by_source.get(node, []) if r["role"].lower() == ":quant"]
-            if (len(quant_records) == 1 and quant_records[0].get("target_is_node")
-                    and self.concepts.get(quant_records[0]["target"], "").endswith("-quantity")):
-                measure = self._numeric_node_surface(quant_records[0]["target"])
-                if (measure and concept not in MEASURE_RELATIONS and not concept.endswith("-quantity")
-                        and not re.search(r"-\d\d$", concept)
-                        and concept not in ("and", "or", "multi-sentence", "name", "amr-unknown")
-                        and not self._name_surface(node)):
-                    # An explicit measurement is not a count of the head noun:
-                    # :quant (volume-quantity :quant 1 :unit cup) -> 1 cup of coffee.
-                    self.events.add(("measured_nominal_surface", node))
-                    return measure + " of " + self._raw_node_surface(node)
-        if self.repairs and concept in MEASURE_RELATIONS:
+        quant_records = [r for r in self.metadata_by_source.get(node, []) if r["role"].lower() == ":quant"]
+        if (len(quant_records) == 1 and quant_records[0].get("target_is_node")
+                and self.concepts.get(quant_records[0]["target"], "").endswith("-quantity")):
+            measure = self._numeric_node_surface(quant_records[0]["target"])
+            if (measure and concept not in MEASURE_RELATIONS and not concept.endswith("-quantity")
+                    and not re.search(r"-\d\d$", concept)
+                    and concept not in ("and", "or", "multi-sentence", "name", "amr-unknown")
+                    and not self._name_surface(node)):
+                # An explicit measurement is not a count of the head noun:
+                # :quant (volume-quantity :quant 1 :unit cup) -> 1 cup of coffee.
+                self.events.add(("measured_nominal_surface", node))
+                return measure + " of " + self._raw_node_surface(node)
+        if concept in MEASURE_RELATIONS:
             values = self._metadata_values(node).get("quant", [])
             if len(values) == 1:
                 # Distances and durations modify a relation, not a plural noun.
                 return values[0] + " " + self.concepts[node]
-        if not self.repairs or not self.concepts.get(node, "").endswith("-quantity"):
+        if not self.concepts.get(node, "").endswith("-quantity"):
             return surface
         metadata = self._metadata_values(node)
         scales = metadata.get("scale", [])
@@ -534,55 +575,52 @@ class GraphOwnedBuilder(FlatTripleBuilder):
         # A leaf negative relative on a nominal coordination is already
         # represented by one projected property per operand. Do not invent a
         # separate "break occurs" carrier for its now-empty inverse traversal.
-        if self.repairs:
-            for root, concept in self.concepts.items():
-                if concept not in ("and", "or") or self.attrs_by_source.get(root):
+        for root, concept in self.concepts.items():
+            if concept not in ("and", "or") or self.attrs_by_source.get(root):
+                continue
+            edges = self.outgoing.get(root, [])
+            if len(edges) < 2 or any(not F._OP_ROLE_RE.fullmatch(e["role"]) for e in edges):
+                continue
+            operands = {e["target"] for e in edges}
+            if len(operands) != len(edges) or any(
+                    re.search(r"-\d\d$", self.concepts[n])
+                    or self.concepts[n] in ("and", "or")
+                    or self._raw_has_negative_polarity(n)
+                    or self._condition_edges(n)
+                    or len(self.incoming.get(n, [])) != 1 for n in operands):
+                continue
+            for anchor, _eid in self.inverse_tree_children.get(root, []):
+                outgoing = self.outgoing.get(anchor, [])
+                attrs = self.attrs_by_source.get(anchor, [])
+                if (len(outgoing) != 1 or outgoing[0]["target"] != root
+                        or outgoing[0]["role"].casefold() != ":arg1"
+                        or self.incoming.get(anchor)
+                        or not self._raw_has_negative_polarity(anchor)
+                        or any(a["role"].casefold() not in (":polarity", ":wiki") for a in attrs)):
                     continue
-                edges = self.outgoing.get(root, [])
-                if len(edges) < 2 or any(not F._OP_ROLE_RE.fullmatch(e["role"]) for e in edges):
+                others = [e for e in self.incoming.get(root, []) if e["source"] != anchor]
+                if (len(others) != 1 or others[0]["source"] == anchor
+                        or others[0]["id"] in {eid for _n, eid in self.inverse_tree_children.get(root, [])}):
                     continue
-                operands = {e["target"] for e in edges}
-                if len(operands) != len(edges) or any(
-                        re.search(r"-\d\d$", self.concepts[n])
-                        or self.concepts[n] in ("and", "or")
-                        or self._raw_has_negative_polarity(n)
-                        or self._condition_edges(n)
-                        or len(self.incoming.get(n, [])) != 1 for n in operands):
+                governor = others[0]["source"]
+                outer = [a for a in self.atom_specs
+                         if self._atom_branch_anchor(a) == governor
+                         and a.get("coordination_root_node") == root]
+                if {a["_owner"] for a in outer} != operands:
                     continue
-                for anchor, _eid in self.inverse_tree_children.get(root, []):
-                    outgoing = self.outgoing.get(anchor, [])
-                    attrs = self.attrs_by_source.get(anchor, [])
-                    if (len(outgoing) != 1 or outgoing[0]["target"] != root
-                            or outgoing[0]["role"].casefold() != ":arg1"
-                            or self.incoming.get(anchor)
-                            or not self._raw_has_negative_polarity(anchor)
-                            or any(a["role"].casefold() not in (":polarity", ":wiki") for a in attrs)):
-                        continue
-                    others = [e for e in self.incoming.get(root, []) if e["source"] != anchor]
-                    if (len(others) != 1 or others[0]["source"] == anchor
-                            or others[0]["id"] in {eid for _n, eid in self.inverse_tree_children.get(root, [])}):
-                        continue
-                    governor = others[0]["source"]
-                    outer = [a for a in self.atom_specs
-                             if self._atom_branch_anchor(a) == governor
-                             and a.get("coordination_root_node") == root]
-                    if {a["_owner"] for a in outer} != operands:
-                        continue
-                    projected = [a for a in self.atom_specs if self._atom_branch_anchor(a) == anchor]
-                    if (len(projected) != len(operands)
-                            or {a["_owner"] for a in projected} != operands
-                            or any(a.get("coordination_root_node") != root
-                                   or a.get("kind") != "dyadic" for a in projected)):
-                        continue
-                    self.negative_relatives[anchor] = (root, governor)
+                projected = [a for a in self.atom_specs if self._atom_branch_anchor(a) == anchor]
+                if (len(projected) != len(operands)
+                        or {a["_owner"] for a in projected} != operands
+                        or any(a.get("coordination_root_node") != root
+                               or a.get("kind") != "dyadic" for a in projected)):
+                    continue
+                self.negative_relatives[anchor] = (root, governor)
         original = self.unary_records
         self.unary_records = [r for r in original if r["node"] not in self.negative_relatives]
         try:
             super()._add_required_unaries()
         finally:
             self.unary_records = original
-        if not self.repairs:
-            return
         records = {r['node']: r for r in self.unary_records}
         for root in self.concepts:
             if self.concepts[root] != 'or' or root in self.metadata_term_nodes:
@@ -603,66 +641,12 @@ class GraphOwnedBuilder(FlatTripleBuilder):
                 if F._formula_ids(self._compile_node(node, self._active_formula_probe(), (root,))):
                     continue
                 unary = records[node]
-                self._add_spec(dict(_owner=node, _priority=3, kind='unary', arity=1,
+                self._add_spec(dict(_owner=node, kind='unary', arity=1,
                     terms=[self.node_surface(node)], predicate=self.node_surface(node),
                     component_dyad_ids=[], source_graph_record_ids=[],
                     canonical_payload=deepcopy(unary['canonical_payload']),
                     canonical_key=unary['canonical_concept'], base_surface_text=self._bare_unary_surface(node)))
                 self.events.add(('empty_or_operand_unary_carrier', node))
-
-    def _compile_node_core(self, node, owner_atoms, stack):
-        if node not in stack and self._formula_stage:
-            result = self._closed_entity_or(node, owner_atoms)
-            if result is not None:
-                return result
-        if node not in self.conditions:
-            return super()._compile_node_core(node, owner_atoms, stack)
-        if node in stack:
-            raise TranslatorContractError("conditional scope cycle")
-        condition, consequence = self.conditions[node]
-        next_stack = (*stack, node)
-        antecedent = self._compile_node(condition, owner_atoms, next_stack)
-        consequent = self._compile_node(consequence, owner_atoms, next_stack)
-        if not F._formula_ids(antecedent) or not F._formula_ids(consequent):
-            raise TranslatorContractError("condition lacks a proposition")
-        conditional = {"op": "implies", "antecedent": antecedent,
-                       "consequent": consequent}
-        return F._combine_ast("and", [conditional] + [F._atom_ast(a["id"])
-                              for a in owner_atoms.get(node, [])])
-
-    def _compile_node(self, node, owner_atoms, stack):
-        if getattr(self, 'repairs', False):
-            for i, root in enumerate(stack[:-1]):
-                if self.concepts.get(root) != 'or':
-                    continue
-                targets = {edge['target'] for edge in self._connective_op_edges(root)}
-                if stack[i + 1] in targets and node in targets - {stack[i + 1]}:
-                    if not self._explicit_boolean_operand(node, stack):
-                        return {'op': 'true'}
-                    self.events.add(('explicit_boolean_reference_preserved', node))
-        # Select the existing edge-specific atom for a shared property.
-        for i, root in enumerate(stack[:-1]):
-            shared = getattr(self, '_shared_or_properties', {}).get(root)
-            if not shared:
-                continue
-            targets, properties = shared
-            active = stack[i + 1]
-            if active in targets and node in properties:
-                eid = properties[node][active]
-                owner_atoms = dict(owner_atoms)
-                owner_atoms[node] = [atom for atom in owner_atoms.get(node, [])
-                                     if eid in atom.get('source_graph_record_ids', [])]
-        original_inverse = self.inverse_tree_children.get(node, [])
-        if self.repairs:
-            retained = [(child, eid) for child, eid in original_inverse
-                        if not self._inverse_statement_conflict(child, (*stack, node))]
-            if retained != original_inverse:
-                self.events.add(("shared_entity_inverse_scope_isolation", node))
-                self.inverse_tree_children[node] = retained
-        try:
-            return self._compile_node_scoped(node, owner_atoms, stack)
-        finally:
-            self.inverse_tree_children[node] = original_inverse
 
     def _explicit_boolean_operand(self, node, stack):
         if not stack:

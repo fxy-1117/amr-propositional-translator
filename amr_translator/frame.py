@@ -6,13 +6,10 @@ import copy
 import json
 
 from . import primitives, formula as formula_ops, propbank, verbalization
-from .primitives import formula_ast_to_string
 
-
-AMR_TRIPLE_RELEASE_EXACT_MATCH_POLICY = "normalized-base-surface-text"
 
 class TranslatorContractError(RuntimeError):
-    """Raised when the fixed standalone contract cannot be satisfied."""
+    """Raised when a frame violates the public output contract."""
 
 def _apply_role_surfaces(base: Mapping[str, Any]) -> Dict[str, Any]:
     """Apply the parser-faithful, PropBank-aware verbalization rules."""
@@ -45,22 +42,6 @@ def format_nli_prompt_surface(value: Any) -> str:
 
     return f"{str(value).strip()}."
 
-def _expression_from_canonical_key(value: Any) -> Dict[str, Any]:
-    """Decode the translator's canonical atom identity."""
-
-    atom_type, separator, payload_text = str(value).partition(":")
-    if not separator or atom_type not in _EXPRESSION_KIND_BY_TYPE:
-        raise TranslatorContractError("release atom has an invalid expression type")
-    try:
-        payload = json.loads(payload_text)
-    except (TypeError, ValueError) as exc:
-        raise TranslatorContractError(
-            "release atom has a malformed expression"
-        ) from exc
-    if not isinstance(payload, Mapping) or "type" in payload:
-        raise TranslatorContractError("release atom has a malformed expression")
-    return {"type": atom_type, **copy.deepcopy(dict(payload))}
-
 def canonical_atom_key(expression: Mapping[str, Any]) -> str:
     """Serialize a structured atom expression into its canonical identity."""
 
@@ -71,7 +52,7 @@ def canonical_atom_key(expression: Mapping[str, Any]) -> str:
     if expected_kind is None or expression.get("kind") != expected_kind:
         raise TranslatorContractError("release atom has an invalid expression type")
     payload = {
-        key: copy.deepcopy(value)
+        key: value
         for key, value in expression.items()
         if key != "type"
     }
@@ -88,44 +69,39 @@ def canonical_atom_key(expression: Mapping[str, Any]) -> str:
         ) from exc
     return "{}:{}".format(atom_type, encoded)
 
-def _public_frame(frame: Mapping[str, Any]) -> Dict[str, Any]:
-    """Expose only the formula and atom information used by the methods."""
 
-    return {
-        "formula_ast": copy.deepcopy(frame["formula_ast"]),
+def _copy_canonical_payload(value: Any) -> Any:
+    """Copy JSON values in canonical key order without a serialization round trip."""
+    if isinstance(value, Mapping):
+        return {key: _copy_canonical_payload(value[key]) for key in sorted(value)}
+    if isinstance(value, list):
+        return [_copy_canonical_payload(item) for item in value]
+    return value
+
+
+def finalize_frame(internal: Mapping[str, Any]) -> Dict[str, Any]:
+    """Normalize the formula and retain only atoms that remain active."""
+
+    formula = internal.get("formula_ast")
+    if not isinstance(formula, Mapping):
+        raise TranslatorContractError("translator did not produce a formula")
+    normalized_formula = formula_ops._normalize_solver_constants(formula)
+    active_ids = primitives._formula_ids(normalized_formula)
+    result = {
+        "formula_ast": normalized_formula,
         "atoms": [
             {
                 "id": str(atom["id"]),
-                "expression": _expression_from_canonical_key(
-                    atom["canonical_key"]
-                ),
+                "expression": {
+                    "type": str(atom["canonical_key"]).partition(":")[0],
+                    **_copy_canonical_payload(atom["canonical_payload"]),
+                },
                 "verbalization": str(atom["base_surface_text"]).strip(),
             }
-            for atom in frame["atoms"]
+            for atom in internal.get("atoms", [])
+            if str(atom.get("id", "")) in active_ids
         ],
     }
-
-def finalize_frame(
-    internal: Mapping[str, Any],
-) -> Dict[str, Any]:
-    """Normalize the formula and retain only atoms that remain active."""
-
-    frame = copy.deepcopy(dict(internal))
-    formula = frame.get("formula_ast")
-    if not isinstance(formula, Mapping):
-        raise TranslatorContractError("translator did not produce a formula")
-    normalized_formula = formula_ops._normalize_solver_constants(
-        formula
-    )
-    active_ids = primitives._formula_ids(normalized_formula)
-    original_atoms = list(frame.get("atoms", []))
-    frame["atoms"] = [
-        copy.deepcopy(atom)
-        for atom in original_atoms
-        if str(atom.get("id", "")) in active_ids
-    ]
-    frame["formula_ast"] = normalized_formula
-    result = _public_frame(frame)
     validate_frame(result)
     return result
 
@@ -195,8 +171,4 @@ def validate_frame(frame: Mapping[str, Any]) -> None:
     if primitives._formula_ids(formula) != set(atom_ids):
         raise TranslatorContractError(
             "release formula and atom inventory differ"
-        )
-    if formula_ops._formula_constant_count(formula):
-        raise TranslatorContractError(
-            "release formula contains a Boolean constant"
         )

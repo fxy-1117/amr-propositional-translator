@@ -66,8 +66,7 @@ def translate_with_audit(raw_amr):
     reporting_limits = reporting_boundaries(builder)
     property_limits = property_merge_boundaries(builder, limitations + reporting_limits)
     frame, merges, rejected = merge_registered_templates(
-        builder, internal, repaired, limitations + reporting_limits + property_limits,
-        extended=True)
+        builder, internal, repaired, limitations + reporting_limits + property_limits)
     limitations += reporting_limits + property_limits
     if any(a['expression'].get('scope_type') for a in frame['atoms']):
         raise RuntimeError('Unexpected nonfactual scope atom')
@@ -82,6 +81,11 @@ def translate_with_audit(raw_amr):
     if any(n != 1 for n in Counter(consumed_atoms).values()) or any(
             n != 1 for n in Counter(consumed_edges).values()):
         raise RuntimeError('Ordinary merge reuses a component')
+    # Normalize only after all rules and merges have finished using raw surfaces.
+    for atom in frame['atoms']:
+        atom['verbalization'] = frames.normalize_exact_match_surface(atom['verbalization'])
+    for merge in merges:
+        merge['surface'] = frames.normalize_exact_match_surface(merge['surface'])
     frames.validate_frame(frame)
     return {
         'frame': frame,

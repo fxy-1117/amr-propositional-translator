@@ -42,15 +42,12 @@ x1 boy run
 Negation is represented in the formula rather than prefixed to the atom's
 verbalization. The output contains exactly the atoms referenced by the formula.
 
-Each `verbalization` has leading and trailing whitespace removed. Output
-formatting preserves case and existing punctuation and adds no final period.
-
-Translation rules handle AMR roles, coordination, conditions, polarity, and
-supported atom merges.
+Each `verbalization` has leading and trailing whitespace removed and uses
+Unicode case folding. Exact matching compares these strings directly.
+Internal whitespace and existing punctuation are preserved; no final period is added.
 
 `translate_with_audit(raw_amr)` returns the translation under `frame`, plus
-diagnostics for applied rules, merges, warnings, and limitations. Warnings and
-limitations describe unresolved cases.
+diagnostics for applied rules, merges, warnings, and limitations.
 
 Nonfactual and reported content have limited semantic support; consult the
 diagnostics returned by `translate_with_audit`.

@@ -2,7 +2,7 @@
 from copy import deepcopy
 import re
 
-from . import primitives, verbalization
+from . import verbalization
 
 POSSESSIVE_PRONOUNS = {"i": "my", "you": "your", "he": "his", "she": "her",
                       "it": "its", "we": "our", "they": "their"}
@@ -178,8 +178,7 @@ def render_dyad_with_term(builder, row, index, text):
     """Re-use the exact dyad role realizer after modifying one endpoint NP."""
     record = deepcopy(row["record"])
     record["terms"][index] = text
-    roles = verbalization
-    roles._resurface_record(record)
+    verbalization._resurface_record(record)
     fix = corrected_dyad(builder, record)
     surface = fix[0] if fix else record["base_surface_text"]
     preserved_text = text

@@ -11,21 +11,21 @@ from .surfaces import (ADJECTIVE_STATES, POSSESSIVE_PRONOUNS, copula,
 
 TEMPLATES = (
     {"id": "attribute_degree", "roles": (":arg1", ":degree"),
-     "surface": "{subject} is {degree} {property}", "priority": 0},
+     "priority": 0},
     {"id": "domain_modifier", "roles": (":domain", ":mod"),
-     "surface": "{subject} is {modifier} {type}", "priority": 1},
+     "priority": 1},
     {"id": "possessive_modifier", "roles": (":mod", ":poss"),
-     "surface": "{possessor}'s {modifier} {entity}", "priority": 2},
+     "priority": 2},
     {"id": "entity_two_modifiers", "roles": (":mod", ":mod"),
-     "surface": "{modifier1} {modifier2} {entity}", "priority": 3},
+     "priority": 3},
     {"id": "event_simple_modifier", "roles": (":arg0", ":mod"),
-     "surface": "{participant} {event} {modifier}", "priority": 4},
+     "priority": 4},
     {"id": "event_simple_modifier", "roles": (":arg1", ":mod"),
-     "surface": "{participant} {event} {modifier}", "priority": 4},
+     "priority": 4},
     {"id": "spatial_path", "roles": (":location", ":op1"),
-     "shape": "directed_path", "surface": "{entity} {spatial_relation} {landmark}", "priority": 5},
+     "shape": "directed_path", "priority": 5},
     {"id": "domain_degree", "roles": (":degree", ":domain"),
-     "surface": "{subject} is {degree} {property}", "priority": 6},
+     "priority": 6},
     {"id": "participant_leaf_modifier", "roles": (":arg0", ":mod"),
      "shape": "directed_path", "priority": 7},
     {"id": "participant_leaf_modifier", "roles": (":arg1", ":mod"),
@@ -193,44 +193,6 @@ def _local_leaf(builder, node):
             and len(builder.incoming.get(node, [])) == 1)
 
 
-def _local_tree_scope_issue(builder, centre, pair, boundaries):
-    """Reject ambiguous scope ownership through inverse/shared references.
-
-    This supplements, rather than changes, the common normalized-edge guard.
-    The endpoints exclusive to each relation must have the same raw content
-    and disjunction context; the shared entity cannot establish ownership.
-    """
-    graph_guard = getattr(builder, 'local_merge_scope_issue', None)
-    if graph_guard is not None:
-        return graph_guard([row['record'] for row in pair], boundaries)
-    endpoints = [next(n for n in (r["record"]["source_node"], r["target"]) if n != centre)
-                 for r in pair]
-    paths = []
-    for endpoint in endpoints:
-        path, seen = [], set()
-        while endpoint not in seen:
-            seen.add(endpoint)
-            path.append(endpoint)
-            if endpoint not in builder.tree_parents:
-                break
-            endpoint = builder.tree_parents[endpoint]
-        paths.append(path)
-    for boundary in boundaries:
-        if (boundary["content"] in paths[0]) != (boundary["content"] in paths[1]):
-            return "local_raw_tree_cross_content_scope"
-    contexts = []
-    for path in paths:
-        context = set()
-        for child, parent in zip(path, path[1:]):
-            if builder.concepts.get(parent) == "or":
-                context.add(("or", parent, child))
-            if any(e["role"].lower() == ":condition" and e["target"] == child
-                   for e in builder.outgoing.get(parent, [])):
-                context.add(("condition", parent, child))
-        contexts.append(context)
-    return "local_raw_tree_cross_boolean_scope" if contexts[0] != contexts[1] else None
-
-
 def _local_property(builder, row, *, domain=False):
     node = row["record"]["source_node"]
     return (row["role"] in ((":domain",) if domain else (":arg1", ":domain"))
@@ -349,14 +311,14 @@ def _local_surface(builder, centre, pair, template):
     rule = template["id"]
     if rule == "local_brand_new":
         subject = next(r["target"] for r in pair if r["role"] in (":arg1", ":domain"))
-        return "{} {} brand new".format(builder.node_surface(subject), _copula(builder, subject))
+        return "{} {} brand new".format(builder.node_surface(subject), copula(builder, subject))
     if rule == "local_domain_possessor":
         prop, owner = pair
         head = possessive(builder, owner["target"], builder.node_surface(centre))
         predicate = prop["record"]["source_node"]
         if builder.concepts[predicate] in COUNTABLE_TYPES:
             word = builder.node_surface(predicate)
-            return "{} {} {} {}".format(head, _copula(builder, centre),
+            return "{} {} {} {}".format(head, copula(builder, centre),
                 "an" if word[:1].lower() in "aeiou" else "a", word)
         return render_dyad_with_term(builder, prop, 1, head)
     if rule in ("local_property_location", "local_property_part"):
@@ -373,7 +335,7 @@ def _local_surface(builder, centre, pair, template):
     if rule == "local_material_modifier":
         material, modifier = pair
         return "{} {} made of {}".format(_modified_head(builder, centre, [modifier["target"]]),
-            _copula(builder, centre), builder.node_surface(material["target"]))
+            copula(builder, centre), builder.node_surface(material["target"]))
     base = template["base_rule"]
     mods = [r["target"] for r in pair if r["role"] == ":mod"]
     head = _local_modified_head(builder, centre, mods)
@@ -398,7 +360,7 @@ def _local_location_surface(builder, relation, index, head):
             and place.casefold() == builder.node_surface(target).casefold()):
         place = object_pronoun(place)
     prep = "" if place in ("outdoors", "indoors", "here", "there", "outside", "inside") else "at "
-    return "{} {} {}{}".format(subject, _copula(builder, source), prep, place)
+    return "{} {} {}{}".format(subject, copula(builder, source), prep, place)
 
 
 def atom_locations(ast):
@@ -451,9 +413,7 @@ def _simple_modifier(builder, node):
         return False
     # Leaf modifiers only. ARG-bearing events or modifier-internal clauses are
     # not silently absorbed into a surface containing only their predicate.
-    if builder.outgoing.get(node) or builder.attrs_by_source.get(node):
-        return False
-    return len(builder.incoming.get(node, [])) == 1
+    return _local_leaf(builder, node)
 
 
 def _guard(builder, centre, left, right, template, locations, boundaries):
@@ -637,7 +597,7 @@ def _remaining_surface(builder, centre, pair, template):
     properties = [r for r in pair if _physical_property(builder, r)]
     if rule == "physical_property_relation" and len(properties) == 2:
         words = sorted(PHYSICAL_PROPERTY_SURFACES[builder.concepts[r["record"]["source_node"]]] for r in properties)
-        return "{} {} {} and {}".format(builder.node_surface(centre), _copula(builder, centre), *words)
+        return "{} {} {} and {}".format(builder.node_surface(centre), copula(builder, centre), *words)
     if rule in ("physical_property_relation", "spatial_landmark_property"):
         if len(properties) != 1:
             return None
@@ -669,7 +629,7 @@ def _extra_guard(builder, centre, pair, template, locations, boundaries):
     if any(b["governor"] in nodes and b["content"] in nodes for b in boundaries):
         return "nonfactive_boundary"
     if template["id"].startswith("local_"):
-        reason = (_local_tree_scope_issue(builder, centre, pair, boundaries)
+        reason = (builder.local_merge_scope_issue([row['record'] for row in pair], boundaries)
                   or _local_guard(builder, centre, pair, template))
         if reason is None and _local_surface(builder, centre, pair, template) is None:
             return "surface_does_not_preserve_modified_endpoint"
@@ -725,7 +685,7 @@ def _extra_surface(builder, centre, pair, template):
         props.sort(key=lambda n: (MODIFIER_CLASS.get(builder.node_surface(n), (99, ""))[0],
                                   builder.node_surface(n), n))
         # Preserve two predications explicitly, including two color properties.
-        return "{} {} {} and {}".format(builder.node_surface(centre), _copula(builder, centre),
+        return "{} {} {} and {}".format(builder.node_surface(centre), copula(builder, centre),
                                          *(builder.node_surface(n) for n in props))
     if rule in ("participant_possessor", "located_entity_possessor"):
         head = possessive(builder, right["target"], builder.node_surface(centre))
@@ -734,25 +694,21 @@ def _extra_surface(builder, centre, pair, template):
     if rule in ("located_entity_modifier", "located_entity_possessor"):
         place = builder.node_surface(left["target"])
         prep = "" if place in ("outdoors", "indoors", "here", "there", "outside", "inside") else "at "
-        return "{} {} {}{}".format(head, _copula(builder, centre), prep, place)
+        return "{} {} {}{}".format(head, copula(builder, centre), prep, place)
     if rule == "landmark_leaf_modifier":
         source = left['record']['source_node']
-        return "{} {} at {}".format(builder.node_surface(source), _copula(builder, source), head)
+        return "{} {} at {}".format(builder.node_surface(source), copula(builder, source), head)
     return render_dyad_with_term(builder, left, 1, head)
 
 
 def _modified_head(builder, centre, modifiers):
-    head = builder.node_surface(centre)
     same_class = (len(modifiers) == 2 and
                   MODIFIER_CLASS[builder.concepts[modifiers[0]].casefold()][0] ==
                   MODIFIER_CLASS[builder.concepts[modifiers[1]].casefold()][0])
     # Two color attributes remain explicit conjuncts, not an invented blended
     # color ("blue and purple", not the ambiguous compound "blue purple").
     prefix = (" and " if same_class else " ").join(builder.node_surface(n) for n in modifiers)
-    quant = builder._metadata_values(centre).get("quant", [])
-    if quant and head.startswith(quant[0] + " "):
-        return quant[0] + " " + prefix + " " + head[len(quant[0]) + 1:]
-    return prefix + " " + head
+    return _prefix_head(builder, centre, prefix)
 
 
 def _surface(builder, centre, left, right, template):
@@ -762,7 +718,7 @@ def _surface(builder, centre, left, right, template):
         return core["atom"]["base_surface_text"] + " together"
     if template["id"] in ("attribute_degree", "domain_degree"):
         subject = roles[":domain" if template["id"] == "domain_degree" else ":arg1"]
-        return "{} {} {} {}".format(builder.node_surface(subject), _copula(builder, subject),
+        return "{} {} {} {}".format(builder.node_surface(subject), copula(builder, subject),
                                      DEGREE_SURFACES[builder.concepts[roles[":degree"]].casefold()],
                                      builder.node_surface(centre))
     modifiers = [x["target"] for x in (left, right) if x["role"] == ":mod"]
@@ -774,17 +730,13 @@ def _surface(builder, centre, left, right, template):
                 and not builder._metadata_values(centre).get("quant")):
             head = ("an " if head[:1].lower() in "aeiou" else "a ") + head
         return "{} {} {}".format(builder.node_surface(roles[":domain"]),
-                                  _copula(builder, roles[":domain"]), head)
+                                  copula(builder, roles[":domain"]), head)
     if template["id"] == "possessive_modifier":
         return possessive(builder, roles[":poss"], head)
     return head
 
 
-def _copula(builder, subject):
-    return copula(builder, subject)
-
-
-def merge_registered_templates(builder, internal, frame, boundaries, *, extended=True):
+def merge_registered_templates(builder, internal, frame, boundaries):
     groups = _ordinary_dyads(builder, internal, frame)
     locations = atom_locations(frame["formula_ast"])
     candidates, rejected = [], Counter()
@@ -792,8 +744,6 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
         for left, right in combinations(rows, 2):
             roles = tuple(sorted((left["role"], right["role"])))
             for template in TEMPLATES:
-                if not extended and template["priority"] >= 4:
-                    continue
                 if template.get("shape") in ("directed_path", "shared_target") or template["priority"] >= 7:
                     continue
                 if roles != template["roles"]:
@@ -806,7 +756,7 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
                     primitives._canonical_json(builder._node_identity(x["target"])), x["target"]))
                 candidates.append((template, centre, ordered))
     path_template = next(t for t in TEMPLATES if t["id"] == "spatial_path")
-    for source, rows in (groups.items() if extended else []):
+    for source, rows in groups.items():
         for left in rows:
             if left["role"] != ":location":
                 continue
@@ -837,42 +787,41 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
                     rejected[reason] += 1
                 else:
                     candidates.append((path_template, carrier, [left, right]))
-    if extended:
-        incoming = defaultdict(list)
-        for source, rows in groups.items():
-            for left in rows:
-                incoming[left["target"]].append(left)
-                for right in groups.get(left["target"], []):
-                    for template in TEMPLATES:
-                        if (template.get("shape") == "directed_path" and template["priority"] >= 7
-                                and (left["role"], right["role"]) == template["roles"]):
-                            reason = _extra_guard(builder, left["target"], [left, right], template, locations, boundaries)
-                            if reason:
-                                rejected[reason] += 1
-                            else:
-                                candidates.append((template, left["target"], [left, right]))
-            for left, right in combinations(rows, 2):
-                pair = sorted((left, right), key=lambda x: x["role"])
+    incoming = defaultdict(list)
+    for source, rows in groups.items():
+        for left in rows:
+            incoming[left["target"]].append(left)
+            for right in groups.get(left["target"], []):
                 for template in TEMPLATES:
-                    if (template['priority'] >= 7 and template.get('shape') not in ('directed_path','shared_target')
-                            and tuple(x["role"] for x in pair) == template["roles"]):
-                        reason = _extra_guard(builder, source, pair, template, locations, boundaries)
+                    if (template.get("shape") == "directed_path" and template["priority"] >= 7
+                            and (left["role"], right["role"]) == template["roles"]):
+                        reason = _extra_guard(builder, left["target"], [left, right], template, locations, boundaries)
                         if reason:
                             rejected[reason] += 1
                         else:
-                            candidates.append((template, source, pair))
-        for centre, rows in incoming.items():
-            for left, right in combinations(rows, 2):
-                pair = sorted((left, right), key=lambda x: (x["role"],
-                    primitives._canonical_json(builder._node_identity(x["record"]["source_node"])), x["record"]["source_node"]))
-                for template in TEMPLATES:
-                    if template.get("shape") != "shared_target" or tuple(x["role"] for x in pair) != template["roles"]:
-                        continue
-                    reason = _extra_guard(builder, centre, pair, template, locations, boundaries)
+                            candidates.append((template, left["target"], [left, right]))
+        for left, right in combinations(rows, 2):
+            pair = sorted((left, right), key=lambda x: x["role"])
+            for template in TEMPLATES:
+                if (template['priority'] >= 7 and template.get('shape') not in ('directed_path','shared_target')
+                        and tuple(x["role"] for x in pair) == template["roles"]):
+                    reason = _extra_guard(builder, source, pair, template, locations, boundaries)
                     if reason:
                         rejected[reason] += 1
                     else:
-                        candidates.append((template, centre, pair))
+                        candidates.append((template, source, pair))
+    for centre, rows in incoming.items():
+        for left, right in combinations(rows, 2):
+            pair = sorted((left, right), key=lambda x: (x["role"],
+                primitives._canonical_json(builder._node_identity(x["record"]["source_node"])), x["record"]["source_node"]))
+            for template in TEMPLATES:
+                if template.get("shape") != "shared_target" or tuple(x["role"] for x in pair) != template["roles"]:
+                    continue
+                reason = _extra_guard(builder, centre, pair, template, locations, boundaries)
+                if reason:
+                    rejected[reason] += 1
+                else:
+                    candidates.append((template, centre, pair))
     safe_candidates = []
     for candidate in candidates:
         records = [row["record"] for row in candidate[2]]
@@ -887,10 +836,7 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
         else:
             safe_candidates.append(candidate)
     candidates = safe_candidates
-    legacy_key = lambda x: (x[0]["priority"],
-        primitives._canonical_json(builder._node_identity(x[1])), x[1],
-        tuple(primitives._canonical_json(builder._node_identity(y["target"])) for y in x[2]))
-    candidates.sort(key=getattr(builder, 'merge_candidate_key', legacy_key))
+    candidates.sort(key=builder.merge_candidate_key)
     original = {a["id"]: a for a in frame["atoms"]}
     used, merges, new_atoms = set(), [], []
     next_number = 1 + max(int(a["id"][1:]) for a in frame["atoms"])
@@ -930,7 +876,7 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
         used.update(ids)
 
     def rewrite(n):
-        n = deepcopy(n)
+        n = dict(n)
         if n["op"] in ("and", "or"):
             n["args"] = [rewrite(c) for c in n["args"]]
             if n["op"] == "and":
@@ -954,7 +900,7 @@ def merge_registered_templates(builder, internal, frame, boundaries, *, extended
             n["antecedent"] = rewrite(n["antecedent"])
             n["consequent"] = rewrite(n["consequent"])
         return n
-    result = {"formula_ast": rewrite(frame["formula_ast"]),
+    result = {"formula_ast": rewrite(deepcopy(frame["formula_ast"])),
               "atoms": [deepcopy(a) for a in frame["atoms"] if a["id"] not in used] + new_atoms}
     return result, merges, dict(rejected)
 
@@ -963,8 +909,8 @@ def expand_macros(ast, merges):
     definitions = {m["atom_id"]: m["definition"] for m in merges}
     def expand(n):
         if n["op"] == "atom":
-            return deepcopy(definitions.get(n["id"], n))
-        n = deepcopy(n)
+            return deepcopy(definitions[n["id"]]) if n["id"] in definitions else n
+        n = dict(n)
         if n["op"] in ("and", "or"):
             n["args"] = [expand(c) for c in n["args"]]
         elif n["op"] == "not":
@@ -973,4 +919,4 @@ def expand_macros(ast, merges):
             n["antecedent"] = expand(n["antecedent"])
             n["consequent"] = expand(n["consequent"])
         return n
-    return expand(ast)
+    return expand(deepcopy(ast))

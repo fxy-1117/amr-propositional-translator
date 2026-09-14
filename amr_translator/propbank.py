@@ -177,18 +177,14 @@ def resolve_numbered_role(
     )
 
 _RESOURCE_HASHES = {
-    "AMR-UMR-91-rolesets.xml": (
-        "9645673f4ec60c2caa1daa3430f6efa4c21985474e2a66fefc77e124204a6cb0"
-    ),
+    "AMR-UMR-91-rolesets.xml": INDEX_SUPPLEMENTAL_SHA256,
     "LICENSE": (
         "1fdd47d0526982b4e71694ca4faf1de06ef8957faec92e3d023a26d187ac9cd3"
     ),
     "README.md": (
         "e43e421ecbf8901a9f4b5357b0882235ca12d36dd0d3d3133633a3c282b71e53"
     ),
-    "roleset_index.json": (
-        "59f3e380bbead1e75e60bfedfb868c941e53d8e2c63b7ce3341342a8ec47dc7d"
-    ),
+    "roleset_index.json": INDEX_SHA256,
 }
 
 @lru_cache(maxsize=1)

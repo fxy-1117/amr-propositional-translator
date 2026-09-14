@@ -14,14 +14,16 @@ _OP_ROLE_RE = re.compile(r"^:op(\d+)$", re.IGNORECASE)
 
 _SPACE_RE = re.compile(r"\s+")
 
+_NUMBER_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
+
 class AMRTripleError(ValueError):
-    """Base error for the isolated triple representation."""
+    """Base error for AMR graph conversion and validation."""
 
 class AMRTripleConversionError(AMRTripleError):
     """Raised when a decoded graph cannot be compiled into a finite AST."""
 
 class AMRTripleValidationError(AMRTripleError):
-    """Raised when an artifact violates the foundation stage contract."""
+    """Raised when an atom or formula violates construction invariants."""
 
 def _strip_sense(value: Any) -> str:
     return _SENSE_RE.sub("", str(value).strip())
@@ -97,7 +99,7 @@ def _not_ast(body: Mapping[str, Any]) -> Dict[str, Any]:
     return {"op": "not", "arg": dict(body)}
 
 def formula_ast_to_string(node: Mapping[str, Any]) -> str:
-    """Render the formula with the syntax consumed by the frozen solver."""
+    """Render a Boolean formula using ~, &, |, and >>."""
 
     op = node.get("op")
     if op == "true":
