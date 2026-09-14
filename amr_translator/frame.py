@@ -99,7 +99,7 @@ def _public_frame(frame: Mapping[str, Any]) -> Dict[str, Any]:
                 "expression": _expression_from_canonical_key(
                     atom["canonical_key"]
                 ),
-                "verbalization": str(atom["base_surface_text"]),
+                "verbalization": str(atom["base_surface_text"]).strip(),
             }
             for atom in frame["atoms"]
         ],

@@ -996,7 +996,7 @@ is detected for merge isolation but is not enclosed in a nonfactual scope.
 
 ## Lexical rendering
 
-The verbalizer reads AMR concepts, role labels, literals, names, and metadata. Each public atom contains an unsigned `verbalization`; formula negation does not insert `not` into that string. Ordinary templates use single spaces and do not append a sentence-final period. Predicates generally remain in their base form, as in `Ada give book`.
+The verbalizer reads AMR concepts, role labels, literals, names, and metadata. Each public atom contains an unsigned `verbalization`; formula negation does not insert `not` into that string. The public output removes leading and trailing whitespace from each verbalization, preserving case, internal whitespace, and existing punctuation without adding a final period. Ordinary templates use single spaces. Predicates generally remain in their base form, as in `Ada give book`.
 
 Source: [concept and literal rendering](../amr_translator/primitives.py#L26), [endpoint rendering](../amr_translator/atoms.py#L695), [role templates](../amr_translator/role_templates.py#L567), [final role dispatch](../amr_translator/verbalization.py#L221), [surface repairs](../amr_translator/surfaces.py#L84), and [public frame projection](../amr_translator/frame.py#L91).
 

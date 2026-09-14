@@ -8,6 +8,7 @@ import unittest
 from penman.exceptions import DecodeError
 
 from amr_translator import translate, translate_with_audit, validate_frame
+from amr_translator.frame import canonical_atom_key, finalize_frame
 
 
 class TranslationTests(unittest.TestCase):
@@ -29,6 +30,31 @@ class TranslationTests(unittest.TestCase):
                 audit = translate_with_audit(case["raw_amr"])
                 decoded = json.loads(json.dumps(audit, allow_nan=False))
                 self.assertEqual(decoded["frame"], case["frame"])
+
+    def test_public_output_preserves_text_except_outer_whitespace(self):
+        frame = translate("(b / boy)")
+        atom = frame["atoms"][0]
+        for raw, expected in (
+            (" \tAda read book\r\n", "Ada read book"),
+            (" Ada read book. ", "Ada read book."),
+            (" Alan live at U.S. ", "Alan live at U.S."),
+            (" about 0.5 hours ", "about 0.5 hours"),
+            (" Ada  read book ", "Ada  read book"),
+        ):
+            with self.subTest(raw=raw):
+                internal = {
+                    "formula_ast": deepcopy(frame["formula_ast"]),
+                    "atoms": [{
+                        "id": atom["id"],
+                        "canonical_key": canonical_atom_key(atom["expression"]),
+                        "base_surface_text": raw,
+                    }],
+                }
+                result = finalize_frame(internal)
+                self.assertEqual(result["atoms"][0]["verbalization"], expected)
+                self.assertEqual(result["atoms"][0]["expression"], atom["expression"])
+                self.assertEqual(result["formula_ast"], frame["formula_ast"])
+                self.assertEqual(internal["atoms"][0]["base_surface_text"], raw)
 
     def test_merges_consume_two_dyads_over_three_nodes_once(self):
         merge_count = 0

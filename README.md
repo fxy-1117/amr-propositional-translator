@@ -42,6 +42,9 @@ x1 boy run
 Negation is represented in the formula rather than prefixed to the atom's
 verbalization. The output contains exactly the atoms referenced by the formula.
 
+Each `verbalization` has leading and trailing whitespace removed. Output
+formatting preserves case and existing punctuation and adds no final period.
+
 Translation rules handle AMR roles, coordination, conditions, polarity, and
 supported atom merges.
 
